@@ -9,7 +9,6 @@ config.h
 config.log
 config.status
 config/
-configure
 linkbox/tlb
 stamp-h1
 tlbcmd/tlbcmd
