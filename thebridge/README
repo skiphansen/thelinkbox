@@ -1,0 +1,1068 @@
+Welcome to thebridge, a member of the CQiNet family.
+
+http://CQiNet.sourceforge.net
+
+Thebridge is an EchoLink compatible conference bridge that runs under 
+FreeBSD, Linux, QNX, Mac OS X, Windows and hopefully most other Posix 
+compatible operating systems.
+
+If you've never hear of EchoLink then this software probably won't make 
+much sense to you.  See: http://www.echolink.org then if you are still 
+interested continue here.
+
+The EchoLink system, and by extension this software, are for Ham radio 
+operators.  Unfortunately unlike "real" Ham Radio SWLs (short wave 
+listeners) are not welcomed so if you're not already a licensed ham it is
+unlikely that you will find much of value here, sorry.
+
+If you haven't given up yet and are running Windows give up now ... No wait! 
+I'm just kidding !  But seriously folks ... read the file README.txt
+instead of this one.
+
+
+############################################
+Updating from previous versions of thebridge
+############################################
+
+New versions of thebridge are usually backwards compatible with configuration 
+files from earlier releases HOWEVER new variables are added frequently.  Since 
+the sample tbd.conf.sample file includes documentation on some features which 
+are not mentioned elsewhere it is worthwhile to review the sample configuration 
+file with each release to discover new capabilities which you may want to 
+take advantage of.  
+
+
+###########
+Portability
+###########
+
+A quick word on portability:  I've tried to the best of my ability and means
+to make thebridge as portable as possible.  I've tested it under several
+versions of FreeBSD and Linux, however *ALL* testing has been on the Intel x86
+architecture.  I hope the code will work on big endian machines as well, but it
+has not been tested on one yet.  If you try this software on a big endian 
+machine I would be very interested in hearing of your success or failure.
+
+
+###################
+Building on a *nix:
+###################
+
+Executive summary: (the usual)
+        "tar xzf thebridge-{VERSION}.tgz"
+        "cd thebridge-{VERSION}"
+        "./configure"
+        "make"
+        <edit the configuration files>
+        <test>
+        "make install"
+        <start the daemon>
+
+Requirements:
+The only known requirement to build thebridge is the GNU GCC compiler or 
+something compatible, a make program and a Bourne shell to run the configure
+script. GNU make is not required, any old make should be fine. I tried to 
+avoid the use of exotic compiler features, hopefully any version of GCC 
+will work.  
+
+As of this writing thebridge has been built and run successfully on 
+FreeBSD 2.2.7, FreeBSD 4.4, Red Hat 7.3, Suse 7.3, Slackware 8.0,
+QNX RTP 6.1 and Mac OS X.
+
+If for some reason either configure or the make should fail please
+send me the details and I'll try to help you correct the problem.
+
+Extract:
+The distribution tar file extracts into a version specific subdirectory so 
+different releases do not conflict with each other.  Substitute the actual
+version number for "{VERSION}" above.  The ".tgz" extension signifies a
+Gzip'ed TAR file.
+
+GNU configure:
+Thebridge uses a GNU autoconfig generated configuration script to generate a 
+site-specific Makefile that is then used to build thebridge.  The configuration
+script is written to be as portable as possible by only assuming the 
+availability of the most generic Bourne shell features.  A suitable shell 
+should be available on just about every *nix system.  It will certainly be 
+available on any system using other GNU tools.
+
+The configuration script provides a great deal of flexibility in the way
+the target program is built and installed, run "./configure --help" for the
+gory details.  Luckily most of the features are seldom needed and running
+configure without any options is usually sufficient.
+
+If you have the GNU readline library (libreadline) you can configure tbdcmd 
+to use it by specifing the --with-readline switch.  The readline library
+adds features such as command history and curses based line editing to
+tbdcmd and tbdchat.
+
+Once the configure script has been run you should have a config.h and Makefile 
+appropriate for your system.  With any luck you should see something similar
+(but probably not identical) when you run configure:
+
+--- snip ---
+% tar xzf thebridge-0.10.tgz
+% cd thebridge-0.10
+% ./configure
+creating cache ./config.cache
+checking for a BSD compatible install... /usr/bin/install -c
+checking whether build environment is sane... yes
+checking whether make sets ${MAKE}... yes
+checking for working aclocal... found
+checking for working autoconf... found
+checking for working automake... found
+checking for working autoheader... found
+checking for working makeinfo... found
+checking for gcc... gcc
+checking whether the C compiler (gcc  ) works... yes
+checking whether the C compiler (gcc  ) is a cross-compiler... no
+checking whether we are using GNU C... yes
+checking whether gcc accepts -g... yes
+checking for a BSD compatible install... /usr/bin/install -c
+checking whether ln -s works... yes
+checking for socket in -lsocket... no
+checking how to run the C preprocessor... gcc -E
+checking for ANSI C header files... yes
+checking for fcntl.h... yes
+checking for limits.h... yes
+checking for sys/time.h... yes
+checking for unistd.h... yes
+checking for sys/signal.h... yes
+checking for sys/timeb.h... yes
+checking for working const... yes
+checking for size_t... yes
+checking whether time.h and sys/time.h may both be included... yes
+checking whether struct tm is in sys/time.h or time.h... time.h
+checking for strdup... yes
+checking for getopt... yes
+checking for ftime... no
+checking for gettimeofday... yes
+checking for stricmp... no
+checking for strcasecmp... yes
+updating cache ./config.cache
+creating ./config.status
+creating Makefile
+creating src/Makefile
+creating config.h
+% 
+--- snip ---
+
+Make:
+The generated makefile provides several useful targets, the default "all" 
+builds thebridge.  The other frequently used targets include "install", 
+"clean", "distclean", and "uninstall". 
+
+--- snip ---
+% make
+make  all-recursive
+Making all in src
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c avl.c
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c conference.c
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c configfile.c
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c configvars.c
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c dirclient.c
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c main.c
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c thebridge.c
+gcc -DHAVE_CONFIG_H -I. -I. -I..    -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2 -c users.c
+gcc -Wall -DSYSCON_DIR=\"/usr/local/etc\" -g -O2  -o tbd  avl.o conference.o configfile.o configvars.o dirclient.o  main.o thebridge.o users.o
+%
+--- snip ---
+
+There shouldn't be any errors or warnings displayed during the build process.
+If you get warnings or errors I'd be interested in hearing about them.  The 
+final output of the build process is the thebridge daemon "tbd" which is built
+in the src subdirectory.  The name of thebridge executable is tbd for "TheBridge 
+Daemon (and it's also a good excuse to create yet another TLA).  We'll test it 
+before installing it.  Before we test it we need to edit the configuration file.
+
+#######################
+thebridge Configuration
+#######################
+
+There is a single text file "tbd.conf.sample" that is used to configure 
+thebridge.  Fire up your favorite editor and change the various variables to 
+appropriate values.  Refer to the comments in the file for guidance.  
+
+Most sites will only need to change the ConferenceCall, ConferencePass, 
+ConferenceQth and WorkingDir settings. 
+
+NOTE: the EchoLink directory servers *WILL NOT ACCEPT* a conference style 
+callsign like "*W1AW*" unless you have specifically registered as a conference 
+by the EchoLink administrators. I suggest that you test the conference 
+using your usual callsign first. See www.echolink.org/el/conf.htm for more 
+details.
+
+Lines beginning with ';' or '#' are comments, if you decide to set any of the
+optional settings be sure to delete leading ';' character before the 
+configuration variable.
+
+--- snip ---
+% cp tbd.conf.sample tbd.conf
+% vi tbd.conf
+--- snip ---
+
+Since daemons are not connected to any console they must communicate with 
+the sysop in some other manner.  As with most *nix daemons thebridge uses 
+the syslog system.  Thebridge uses "LOG_LOCAL5" as the facility when opening 
+the log and generates messages with priorities LOG_INFO, LOG_WARNING and 
+LOG_ERR.  It's up to the user to decide which message if any he wants to log,
+but unless you are a psychic I would strongly suggest that at least the LOG_ERR 
+messages be logged.
+
+Lets assume we want to log all messages and that we also want to put them into 
+a separate log file.  To accomplish this we need to reconfigure the syslog
+daemon.  The reconfiguration consists of nothing more than adding two lines 
+to the bottom of /etc/syslog.conf.  You will need to edit the file as root.
+
+Most daemons load their configuration files at system boot time and do not
+check for changes while running.  In most cases sending the hangup signal (HUP)
+to the daemon will cause it to re-read the configuration file.  Both syslogd
+and thebridge work this way.  In order to send a signal to a daemon we need
+to know its process identification (pid) number.  For convenience most daemons 
+store their PID number in a file /var/run/{daemon name}.pid to make it easier 
+for scripts to send signals to them.  Again both syslogd and thebridge follow
+this convention.
+
+Some versions of syslog seem to require that a log file to exist before they
+will use it.  Lets be safe and create the file before issuing the HUP.
+
+--- snip ---
+%su
+Password:
+fastbsd# vi /etc/syslog.conf
+(add the following at the end of the file)
+!tbd
+*.*                     /var/log/tbd.log
+(save the file and exit vi)
+fastbsd# touch /var/log/tbd.log
+fastbsd# kill -HUP `cat /var/run/syslog.pid`
+fastbsd# exit
+%
+--- snip ---
+
+Syslog should now be ready to log the messages from tbd.  Refer to the 
+syslog(3), syslogd(8), and syslog.conf(5) man page for more details.
+
+
+#######
+Testing
+#######
+
+The daemon has two command line switches to aid testing.  The first switch -f
+specifies where the tbd.conf configuration is located.  
+
+The second switch -d enables debug mode, causing the daemon to run in the
+foreground as a user process while displaying debug information on the screen.
+The debug switch may be used multiple times to increase the detail level of
+the information displayed up to a maximum of three times.
+
+For our purposes a single -d suffices. 
+
+--- snip ---
+% src/tbd -d -f tbd.conf
+PullerLoginAck(): Client 2 successfully updated status.
+ParseStationList(): completed successfully, 376 stations listed.
+--- snip ---
+
+The first message indicates that the daemon was successful in logging into the
+directory server.  Note: the EchoLink servers indicate a successful login
+even if the supplied callsign/password combination is unknown, invalid or 
+banned.  But the success does indicate that tbd was able to establish an TCP
+connection to the server.
+
+The second message is the real good news, our directory request returned 376 
+stations.  If your callsign or password were not recognized there would be
+0 stations.
+
+If you are not able to get a station list, check the configuration file.  You
+might also want to rerun the test using more "-d" switches to help determine
+what when wrong.
+
+Unfortunately, due to the nature of the EchoLink protocols it is not
+possible to test thebridge further using a single computer.  In particular 
+the client program uses the same ports as the server so it's impossible to run
+a server and a client on the same host at the same time.  
+
+Even if you have multiple computers you can't test the program unless you also 
+have multiple *external, routable* IP addresses.  You can't connect to 
+thebridge from another computer on your local LAN if your local LAN is 
+connected to the Internet using a NAT box or other form of Internet sharing 
+where all of your computers appear to be coming from the same IP address.
+
+The easiest way to complete the testing is to have a couple of friends connect
+to thebridge and see if they can talk to each other.  When a station connects
+to thebridge you'll see a message similar to the following:
+
+--- snip ---
+WD4NMQ           JEFF logged into conference.
+W7NTF            GARY logged into conference.
+--- snip ---
+
+Once you've verified that thebridge is operating correctly we're ready to 
+complete the installation.  Hit Ctrl-C to abort thebridge.
+
+--- snip ---
+^CReceived SIGINT, shutting down
+PullerLoginAck(): Client 4 successfully updated status.
+Logged out, exiting.
+%
+--- snip ---
+
+
+############
+Installation
+############
+
+Thebridge is designed to run as a system daemon, i.e. a background program 
+that's loaded automatically by the system as part of the bootup process. 
+
+If you are not familiar with the system startup scripts or you are not
+comfortable starting thebridge automatically you can always start thebridge 
+daemon manually when desired.  Starting thebridge automatically is primarily 
+needed when the host is unattended and it is desired to run thebridge 24/7.
+Refer to the "Running without Root access" section if you would rather not
+modify your system's startup behavior.
+
+Unfortunately my installation rules and knowledge are not complete enough about
+all of the various *nix variations to complete the installation without manual
+assistance.
+
+Most Posix operating systems start system daemons using approaches similar
+to either FreeBSD (i.e. the BSD camp) or RedHat (i.e. the System V camp). 
+Scripts to install thebridge on FreeBSD and RedHat Linux have been provided.
+Start with the scripts that are the closest match to your system and then 
+modify them if necessary.  I will be happy to include installation scripts 
+for other operating system that are sent to me with future releases.
+
+Configuration files for daemons are kept in different places on different
+systems.  It doesn't really matter where the configuration file is as long
+as tbd can find it.  If you want to put it somewhere other than where
+the GNU autoconf tools think it belongs just specify the full configuration 
+file path on the command line using the -f switch.
+
+FreeBSD
+
+Local (not part of the standard distribution) daemons on FreeBSD systems are
+started by placing a shell script /usr/local/etc/rc.d directory with an ".sh"
+extension.  During startup each script is called with an argument of "start".
+During system shutdown they are called again with an argument of "stop".
+
+If you are running on FreeBSD run the installation scripts from the FreeBSD
+subdirectory.  The installation script will copy tbd, tbd.conf.sample and
+tbd.sh into the appropriate subdirectories. You will need to be root to 
+when running the installation script.
+
+--- snip ---
+%cd FreeBSD
+%su
+Password:
+fastbsd# ./install
++ cd ..
++ make install
+Making install in src
+/bin/sh ../config/mkinstalldirs /usr/local/libexec
+  /usr/bin/install -c  tbd /usr/local/libexec/tbd
+/bin/sh ./config/mkinstalldirs /usr/local/etc
+ /usr/bin/install -c -m 644 ./tbd.conf.sample /usr/local/etc/tbd.conf.sample
++ cd FreeBSD
++ cp tbd.sh /usr/local/etc/rc.d
+fastbsd# 
+--- snip ---
+
+Since the installation process only copies tbd.conf.sample (to prevent 
+accidents when thebridge is updated in the future) we must manually copy
+or configuration file to the "standard place":
+
+--- snip ---
+$ cp tbd.conf /usr/local/etc
+--- snip ---
+
+
+RedHat Linux
+
+If you are running on RedHat Linux run the installation scripts from the
+RedHat subdirectory.  The installation script will copy the tbd executable,
+tbd.conf.sample, and tbd shell scripts into the appropriate subdirectories.  
+It will then create links from /etc/rc.d/rc*.d subdirectories the 
+/etc/rc.d/init.d/tbd shell script to start tbd in run levels 2, 3, 4 and 5 and 
+to stop tbd in run levels 0, 1 and 6.  You will need to be root to when 
+running the installation script.
+
+--- snip ---
+$ su
+Password: 
+[root@linux73 RedHat]# ./install
++ cd ..
++ make install
+Making install in src
+make[1]: Entering directory `/home/skip/thebridge-0.10/src'
+make[2]: Entering directory `/home/skip/thebridge-0.10/src'
+/bin/sh ../config/mkinstalldirs /usr/local/libexec
+  /usr/bin/install -c  tbd /usr/local/libexec/tbd
+make[2]: Nothing to be done for `install-data-am'.
+make[2]: Leaving directory `/home/skip/thebridge-0.10/src'
+make[1]: Leaving directory `/home/skip/thebridge-0.10/src'
+make[1]: Entering directory `/home/skip/thebridge-0.10'
+make[2]: Entering directory `/home/skip/thebridge-0.10'
+/bin/sh ./config/mkinstalldirs /usr/local/etc
+ /usr/bin/install -c -m 644 ./tbd.conf.sample /usr/local/etc/tbd.conf.sample
+make[2]: Nothing to be done for `install-data-am'.
+make[2]: Leaving directory `/home/skip/thebridge-0.10'
+make[1]: Leaving directory `/home/skip/thebridge-0.10'
++ cd RedHat
++ ln -s /usr/local/libexec/tbd /usr/sbin
++ '[' '!' -d /etc/rc.d/init.d ']'
++ cp tbd /etc/rc.d/init.d
++ ln -s /etc/rc.d/init.d/tbd /etc/rc.d/rc0.d/K73tbd
++ ln -s /etc/rc.d/init.d/tbd /etc/rc.d/rc1.d/K73tbd
++ ln -s /etc/rc.d/init.d/tbd /etc/rc.d/rc2.d/S73tbd
++ ln -s /etc/rc.d/init.d/tbd /etc/rc.d/rc3.d/S73tbd
++ ln -s /etc/rc.d/init.d/tbd /etc/rc.d/rc4.d/S73tbd
++ ln -s /etc/rc.d/init.d/tbd /etc/rc.d/rc5.d/S73tbd
++ ln -s /etc/rc.d/init.d/tbd /etc/rc.d/rc6.d/K73tbd
+[root@linux73 RedHat]# exit
+$
+--- snip ---
+
+Since the installation process only copies tbd.conf.sample (to prevent 
+accidents when thebridge is updated in the future) we must manually copy
+or configuration file to the "standard place":
+
+--- snip ---
+$ cp tbd.conf /usr/local/etc
+--- snip ---
+
+
+Running without Root access
+
+If you don't have root access to the system you will not have the necessary 
+rights to modify the configuration files necessary to start thebridge at boot 
+time.  Since the EchoLink protocols do not use any privileged ports you 
+will still be able to run thebridge.  Just execute it manually in debug mode 
+specifying the location of the configuration file and redirecting the output
+to a log file or the bit bucket.
+
+--- snip ---
+%src/tbd -d -f tbd.conf > /dev/null &
+%
+--- snip ---
+
+
+#############
+User Commands
+#############
+
+A few commands are available to users that are unique to thebridge.  Commands
+are entered on the message line in the same way as a text message, by 
+prepending a '.' (period).  Commands are not forwarded to other conference 
+users so they are non-intrusive to normal operations.  The command must begin
+at the first character on the line.
+
+Commands may be abbreviated to the shortest length that is still unique.  For
+example ".stat", ".sta", and ".st" are valid abbreviations for the 
+".stats" command, but not ".s" since there are two commands that start with 
+the letter 's' (.stats and .sysop).
+
+".help" and ".?"
+ 
+This command does much as you would guess, it lists the available commands.
+
+".list"  (not available on all conferences)
+
+This command lists any bulletins or recorded nets that may be available to 
+be played back.  
+
+".lookup <callsign>"
+
+This commands displays the node number, Qth and busy status for a specified
+station.  The station must be online or have been online recently for the
+information to be available.
+
+".play <bulletin #>", ".stop"   (not available on all conferences)
+
+This command starts playing the selected bulletin or recording.  Any text 
+messages that were sent during a net are also replayed sent.  While you are in 
+playback mode you will not be listed on the station list of thebridge and 
+you will not receive any live conference traffic, voice or text.  To end the
+playback enter the .stop command or simply disconnect.
+
+".showip"
+
+This command dumps the user list with IP addresses.  
+Format: <callsign> <tab> <IP address> <tab> <'S' | 'R' | 'E'><eol>
+The list is terminate by a blank line.  The final character indicates the
+users protocol, SpeakFreely, RTP, or EchoLink.  The callsign field will
+also contain the user's IP address if the protocol does not provide a callsign.
+
+".stats"
+
+This commands displays interesting (to some) technical statistics about 
+the operation of the conference bridge such as when the maximum number of 
+users were connected.  
+
+".lurk" and ".delurk" (not available on all conferences)
+
+The EchoLink system is very different than "real" radio in one important way...
+everyone knows who is listening.  Sometimes you might only want to monitor a 
+channel, but not get involved in a conversation.  This is particularly useful 
+for nets when you want to listen, but don't have anything to contribute.
+The ".lurk" command allow you to suppress the listing of your callsign as an
+active member of the conference, but you will still be able to listen.  You
+can rejoin the conference at any time by using the ".delurk" command or by 
+simply transmitting.
+
+".uptime"
+
+This command displays the amount of time thebridge has been running since it
+was loaded.  I'll admit it, the primary purpose is for bragging rights... "my
+conference bridge has been up for ..."
+
+".version"
+
+This command displays the version of thebridge software and the type
+of operating system it's running on.
+
+".test"  (not available on all conferences)
+
+This command causes thebridge to record your next transmission and then play
+it back to you when you stop transmitting.  This allows you to test your setup
+and adjust audio levels etc without assistance.  Audio quality is a very 
+subjective thing, it's always best to hear it yourself.  
+
+Note: The UDP protocol used for conferencing is not 100% reliable, the 
+".test" command will send you the response "Your next transmission will 
+be recorded and played back." to  indicate that your command was received.  
+Please do *NOT* make a long test transmission unless you receive the response!  
+Otherwise your test transmission will be sent live over the conference bridge.
+
+
+##############
+Sysop Commands
+##############
+
+".sysop <password>"
+
+None of the sysop commands are available until you identify yourself as 
+an sysop by using the .sysop command and supplying the sysop's password.  
+Additionally sysop's are allowed to transmit during the pausetime to give
+them slightly higher priority on the channel than normal users.
+
+When using this command please *make* sure that you enter the leading '.' and 
+start the command at the beginning of the line, otherwise you may send the 
+sysop's password to everyone logged into the conference!  
+
+Once you have logged in successfully you will be greeted with a welcome 
+message.  You will remain logged in as an sysop only as long as you are 
+connected to thebridge, if you disconnect you will have to login again.
+
+WARNING: Please do not use a "valuable" password for the administrator 
+password, it is sent in clear text via UDP to the RTP port.  i.e. it can be 
+sniffed.
+
+".admins"
+
+This command simply lists the users who are logged in as administrators or
+sysops.  This is a good way of verifying that you are logged in as an sysop 
+before issuing commands.  It's also a good way to determine if it's time to 
+change the passwords (grin).
+
+".busy [on | off | status]"
+
+This command controls the conference's busy status.  The conference's busy
+status is listed in the station directory, additionally connection 
+requests from new stations are refused when the conference is busy.  The
+status option allows a conference to indicate that it is busy to the directory
+servers, but actually continue to accept connections for special purposes.
+
+".connect [-m] [-p <port>] [-s] [-r] <station>"
+".disconnect <station>"
+".disconnect ALL"
+".disconnect last"
+".disconnect ."
+
+These commands allow conference rooms to be linked to increase the capacity 
+beyond what is available on a single server.  The .connect command will accept
+either a station callsign, conference ID, or IP address.
+
+The .connect command establishes a permanent connection between until a 
+.disconnect command is entered by an administrator (of either conference).  If 
+the connection fails the connect will be reestablished automatically when the 
+path returns.
+
+When thebridge is linked to another thebridge running version 0.33 or later 
+then user's callsign and name will be displayed on the linked conference next 
+to the conference's callsign in the station list.  
+
+The .connect command can actually be used to connect to any station it is
+not restricted to conferences.  If a connection is established to an user 
+station he will be able to disconnect using the usual method, this is 
+equivalent to an administrator entering the .disconnect command.
+
+The -m option specifies that a connection started in the .monitor mode.  The
+".monitor disable" command can be used to set the connection to full transceive.
+
+The -s option specifies that the connnection should be made using the speak
+freely protocol rather than the default EchoLink protocol.  The speak 
+freely protocol is provided for compatability with other applications.
+
+The -r option specifies that the connection should be made using the RTP
+protocol rather than the default EchoLink protocol.  The RTP protocol is the
+prefered protocol for anything other than EchoLink connections.
+
+The "ALL" option to the ".disconnect" command disconnects all users, not just
+users who were connected to using the ".connect" command.
+
+The "LAST" option to the ".disconnect" just disconnects the last station that
+connected leaving any other users connected.
+
+The "." option to the ".disconnect" disconnects the station that is talking
+currently.
+
+
+".lurk disable" ".lurk enable" ".lurk <callsign>" ".delurk <callsign>"
+
+Lurking is one of my personal favorite capabilities of thebridge, infact it
+was the first command.  However not everyone shares my opinion.  The ability
+to disable lurking has been the most requested feature.  The disable option
+disables (duh!) the ability for stations to "lurk", the enable option restores
+the capability.  By default lurking is enabled.  Stations attempting to lurk
+when lurking is disabled will be sent a messages informing them that the 
+lurking feature has been disabled.
+
+Sysops can set a specified station's lurking mode.  This is useful to restore
+a stations state after thebridge has been (quickly) rebooted.
+
+"message [message text]"
+
+This command may be used by the scripting interface to send text messages
+to conference users.  Unlike the normal EchoLink text mode messages received
+from the command port are assumed to be commands and need not be prefixed
+by a period.
+
+
+".monitor [disable] <callsign>"
+
+This command allows you to put a station in to a talk only mode. This command
+is basically the opposite of the ".mute" command, the monitored client can 
+talk, but not listen.  This is useful in certain (unusual) situations such 
+as the recent shuttle disaster when you want to listen to a conference, but 
+while ensuring local traffic does not interrupt it.
+
+The disable option is used to return a station to full transceive operation.
+
+".mute"  ".mute ."  ".mute <callsign> [<callsign> ...]"  
+".unmute <callsign> [<callsign...]"
+
+This command allows you to put a station into a listen only mode.  This 
+command is particularly useful during nets to prevent repeater IDs, courtesy 
+tones, and confused users from interrupting a net out of turn.  The .mute 
+command takes effect immediately and remains in effect as long as the station 
+remains logged in or until it is canceled by the .unmute command.
+
+The station that's currently talking may be specified by a dot "." character to
+save typing the entire callsign.
+
+If the .mute command is given without an argument a list of stations that are 
+currently muted is displayed.
+
+".mute -r" ".mute -c" ".mute -u" ".mute -s" ".mute -t" ".mute -a" ".mute -e"
+".unmute -r" ".unmute -c" ".unmute -u" ".unmute -s" ".unmute -t" ".unmute -a"
+".unmute -e"
+
+These variations of the .mute and .unmute commands affect a group of stations
+at a time and additionally put the conference into a mode were new connections
+from stations of that type are automatically muted as well.  These commands
+are primarily of use for controlling large nets such as the N2LEN 9/11 net.
+
+ Where the various suffixes mean:
+
+  -a: All users (except yourself)
+  -c: tbd conferences
+  -e: Echolink conferences
+  -r: RF users (-R and -L stations)
+  -s: Sysops and Admins
+  -t: Station talking
+  -u: PC users
+
+You can use more than one option in a command so if you want to mute
+both RF users and PC users, but not conferences and sysops as well as a
+specific conference you could enter"
+".mute -ru *echotest*"
+
+The station that is currently talking are *NOT* muted by these commands unless 
+the "t" flag is included.
+
+These are additive, if you mute conferences in one command and then mute rf
+users in the next command both remain muted.
+
+".mute chat" ".unmute chat"
+
+This commands allows a sysop to control if text messages are sent to him.
+The command affects the sysop issuing the command only, text messages continue 
+to be forwarded to other users.  This command is useful for net control 
+stations who are trying to read the user list while a lively off topic QSO is 
+going on the background in text mode.
+
+".pausetime"  ".pausetime <time constant>"
+
+This command allows the configuration variable PauseTime to be adjusted as
+needed during normal operation.  The PauseTime variable sets the minimum gap
+between transmissions on the conference.  Stations who jump in before the
+minimum time has elapsed will be sent a warning message and will not be
+repeated until the minimum pause time has elapsed.
+
+This parameter may help prevent repeater "bouncing" that occurs when multiple 
+repeaters or link stations are logged into a  conference room with poor 
+operating parameters.   It will also ensure that there's a break between 
+transmissions to allow simplex links to leave the conference.
+
+".play4 [-f] [-i] <filename> [displayed name]"
+
+This command allows a recording file to be played all users.  When the file is 
+played for all users an optional description may be entered which will appear 
+on the station list as the "station" talking.  If the description is omitted 
+the "station" will be shown as "QST".  The timing of the playback is 
+controlled by the same configuration file variables as the .play command. 
+Normally playback will begin as soon as the conference free (no one is 
+talking), -f and -i flags are used to modify this behavour.  The -f flag can be
+used to force the playback to begin immediately even if someone is talking.
+The -i flag can be used to force the playback to wait for IdleTimeout seconds
+of inactivity before the bulletin playback begins.
+
+These flags provide the ability for scripts to do things such as automatically
+playback a net at a particular while warning any users before hand to allow
+them time to finish their QSOs. For example a couple of warning anouncements 
+could be played 10 mintutes, 5 minutes and one minute before the net and then 
+the bulletin could be played exactly on time using the -f command.
+
+A less driven conference operator might simply use the -i command to play the
+bulletin as soon as the conference becomes free after the appointed time. This
+would allow QSOs to finish naturally before begining a playback.
+
+".play4 -u <user> <filename>"
+
+This variation of play4 command allows a recording to be played for a specifc
+user.
+
+".users [-b] [-c] [-q] [-t] [-T] [-v] [?]"
+  
+The .users command lists the callsign of all VoIP connections order of login 
+along with their attributes.  This command is particularly useful for net
+control operators by enabling them to see more stations than will fit in the
+EchoLink client's info window.
+
+The meaning of the attribute characters may be display by the ".user ?" 
+command.  They are as follows:
+
+User attributes:
+0 - User is usign the Speak Freely protocol
+1 - User is using the RTP protocol
+A - User is logged in as an administrator.
+a - User is using the  ADCPM codec
+B - User is running theBridge conference or thelinkbox.
+C - User is a linked conference other than thebridge.
+c - User's chat text is been suppressed
+F - User is playing a file (using the .play or .test commands).
+f - User is Full duplex
+I - User is Isolated (not In conference)
+K - User's has been Kicked (being disconnected).
+L - User is a Lurker.
+m - User's audio is muted.
+M - User's audio and text are muted.
+P - User is a permanent connection (connected by a .connect command).
+R - User is in Receive only mode (being monitored)
+S - User is logged in as a sysop.
+T - User is currently Talking.
+u - User is running the uLaw codec
+x - User connection is inactive
+! - User is an old version of thebridge which sent SDES packets containing 
+    a private "txt" extension field.
+    
+The -b (bare) switch suppresses the display of user attributes.
+The -c switch displays the amount of time the user has been connected.
+The -q switch suppresses logging of the .user command.  This is useful when
+the .user command is used by AJAX scripts to prevent the log from being
+filled with less than interesting information.
+The -t switch displays the amount of time since user last transmitted.
+The -T switch sorts the user list by time since last transmission.
+The -s switch displays the user list in the same format as is presented
+       to EchoLink users on the right hand side of their client.
+The -v switch displays the version number of user's client
+
+".belchfilter"  ".belchfilter <time constant>"
+
+This command allows the configuration variable BelchTime to be adjusted as
+needed during normal operation.  The BelchTime variable sets the minimum 
+transmission time for -R and -L station before their audio is passed.
+
+This parameter may help prevent repeater "bouncing" that occurs when multiple 
+repeaters or link stations are logged into a  conference room with poor 
+operating parameters.   It can also help prevent repeater "kurchunkers" from
+upsetting the peace.
+
+ 
+######################
+Administrator Commands
+######################
+
+".admin <password>"
+
+None of the administrator commands are available until you identify yourself as 
+an administrator by using the .admin command and supplying the administrator's 
+password.  When using this command please *make* sure that you enter the 
+leading '.' and start the command at the beginning of the line, otherwise you 
+may send the administrator's password to everyone logged into the conference!  
+
+Once you have logged in successfully you will be greeted with a welcome 
+message.  You will remain logged in as an administrator only as long as you
+are connected to thebridge, if you disconnect you will have to login again.
+
+An administrator automatically has access to all sysop commands, there is
+no need to login as a sysop if you are logged in as a administrator.  
+
+Sysops are typically net control operators, administrator's are typically
+node owners.
+
+".allow add <callsign>"
+
+This command adds a new station to the access control list. This command is 
+typically used to add stations to private conferences.  
+
+".allow delete <callsign>"  
+
+This command removes a station from the access control list.
+
+".allow list"
+
+This command displays the stations that are allowed access by the access 
+control list.
+
+".dns list"
+
+This commands displays the entries in the domain name system (DNS) cache.  The
+DNS system converts hostnames such as nawest.echolink.org into IP addresses.
+
+".dns refresh"
+
+This command forces the contents of the DNS cache to be updated.  By default
+the DNS cache is updated every 15 minutes. Forcing an update can help correct
+problems caused by hostnames entries in the ACL which are tied to dynamic IP 
+addresses.
+
+".quote <command line>"
+
+The quote command allows a sysop to send a command to all linked conferences. 
+For example a sysop on one conference can mute a station on another conference
+by entering ".quote .mute w1abc".  Note that since the command is set to *all* 
+linked conferences an error message "w1abc not found" will be generated by
+
+
+".quickexit"
+
+This command caused thebridge to exit without logging out of the EchoLink
+directory servers.  This may be useful when there are communications problems
+or under other special situations.  Normally the ".shutdown" command should
+be used instead.  This command was formally known as .quit, but that caused
+accidents.
+
+
+".record <filename>" ".record stop"
+
+This command starts recording all conference bridge traffic to disk for latter 
+playback.  Traffic recorded includes all conference audio *and* text messages. 
+Test sessions and commands sent to thebridge are not recorded.  The recording 
+file grows at approximately 129000 bytes a minute while someone is talking. 
+The gaps between transmissions are not recorded and do not consume disk space.  
+To end the recording enter ".record stop".  Make a note of the filename you 
+use when recording, you will need it later.  Recordings are not available for 
+playback by users until you explicitly add them to the list of available 
+bulletins.
+
+".refresh"
+
+This command causes thebridge to download an update to the in memory (and 
+on disk if enabled) station list from the Echolink directory server.
+
+
+".rehash"
+
+This command causes thebridge to re-read it's configuration file.  This allows
+changes to be made to the configuration without having to restart the server.
+
+".set <variable>"
+".set <variable> = <value>"
+
+This command allows the administrator to view and set configuration file
+variables interactively.  Most, but not all, variables may be set by this
+command.  Since the configuration file is not updated by this command any
+changes will be lost when thebridge is restarted.
+
+
+".shutdown"
+
+This command causes thebridge to logout of the EchoLink directory servers
+and then exit.
+
+
+".list add <filename> <description>"
+
+Once a recording has been made it may be made available for user playback 
+by adding it to the bulletin list.  Users select bulletins by description, 
+they never see the filename.  This provides the ability to change the file 
+that is played back without changing the description.  For example a 
+description of "Last week's net" could be updated weekly to point to a new 
+recording while keeping an archive of older nets.  
+
+".list"
+
+When in logged in as an administrator the .list command shows the filename 
+corresponding to the description at the beginning of the line.  This is 
+useful for those of us with short memories when using the next command.
+  
+".list delete <filename>"
+
+As you might expect this removes a bulletin from the list. 
+
+".kick <callsign>"
+
+This command terminates a users connection immediately.  This command is useful 
+when you want to disconnect a station completely.  For example a link or 
+repeater station has been connected to the conference for a long period of 
+time and appears to be unattended and a long net is about to start on the 
+conference.  It might be considered a courtesy to dump such connections rather 
+than sending tons of undesired traffic out on the airwaves.  The .kick 
+command has no lasting effect, the kicked station is free to reconnect 
+immediately after being kicked. In our example this would indicate an 
+active interest in the net from someone associated with the link or repeater.
+
+".ban add <callsign> [IP Address/HostName]"
+
+If the previous commands were insufficient to correct a problem then the 
+.ban command can be used to add a station to the banned list.  Unlike the 
+previous commands the banned list is persistent across connections as well as 
+system reboots.  A banned station cannot even connect to thebridge. 
+Note: Stations are banned independently of station type, i.e. if W1AW is 
+banned (what not a league supporter?); W1AW-L and W1AW-R are also banned.  
+
+Additionally stations may be banned by *both* callsign and IP address if 
+desired.  Unlike earlier versions of the bridge version 0.41 and later to 
+not automatically ban stations by IP address, unless it is specified by
+the administrator when the station is banned.
+  
+".ban list"
+
+This lists the current rogues' gallery of banned stations.
+
+".ban delete <callsign>"
+
+Well they finally fixed their repeater, it's about time!  This command 
+removes a station from the banned list.
+
+".info [Info field text]"
+
+The .info command displays and modifies the info (location, Qth) string sent
+to the directory server.  If an argument is not specified the .info command
+simply displays the current info string.  When an argument is given the
+current info string is replaced with the argument and the directory server
+is updated with the new string.  The new string is *NOT* persistent, if
+tbd is restarted the info string will return to the value specified in tbd.conf.
+
+###############
+Script Commands
+###############
+
+".chat [on | off]"
+
+The .chat command controls the chat mode of the command inteface.  When the
+chat mode is off messages sent to the command port are assumed to be commands
+for thebridge and incoming text messages are not forwarded to the command port. 
+When chat mode is on messages sent to the command part are forwarded as text
+message unless preceeded with ".." to indiate they are commands for the local
+system.  When chat mode is on text messages received from the net are 
+forwarded to the command port with an result code of TBD_CHAT_TEXT.  See
+SCRIPTING.txt for more details.
+
+NB: Although the .chat mode feature is still supported it is depreciated. 
+Version 0.84 and later of thebridge provides a separate port for text messages
+to replace the .chat mode.  
+
+#########
+Operation
+#########
+
+Hopefully users of thebridge will not notice much differences between
+thebridge and the other conference bridges other than (hopefully) improved
+reliability, uptime and the availability of the user commands.
+
+Check the log file from time to time to verify that thebridge is operating
+correctly.  
+
+
+###############################
+Bugs/Features/known limitations
+###############################
+
+1.  Consider this software to be Beta quality, it is very new and the paint is 
+still wet.  One of the primary goals is stability approaching that of the 
+operating system and in the FreeBSD or Linux case that says quite a bit.  At 
+this point we're probably a long way from that goal.  At least when thebridge 
+crashes under FreeBSD or Linux the operating system probably won't and we 
+should get a core file that will allow the bug to found and hopefully fixed.  
+
+2. Security is weak.  Currently EchoLink's security is based on 
+passwords which are sent in clear text on over the Internet and the relative 
+obscurity of the system.  Security through obscurity is no security at all! 
+
+3. If the RunAsUser feature is used under Linux core dumps are disabled. This 
+appears to be a security feature inherent in Linux.  If thebridge stops 
+running for unexplained reasons please consider running it as root long enough 
+to get a core dump to assist with correcting the problem.
+
+
+######
+Thanks
+######
+
+Special thanks to WD4NMQ, W7NTF, K7KAJ, and NK6K for helping me debug and 
+test the pre-release versions of thebridge.  In particular Jeff WD4NMQ had 
+already done a lot of investigate work into the iLink protocols before I had 
+even heard of iLink.  Jeff's server code saved me hours of work !
+
+Thanks to Graeme M0CSH and Jonathan K1RFD for bringing an exciting new mode 
+to Ham Radio.
+
+Thanks to N2LEN, K5JD, N7WGR, and KA3LAO for sending in bug reports that 
+helped me find and fix some Windows specific bugs.
+
+Thanks to N9YTY for testing thebridge on MacOS X and reporting the results.
+
+Thanks to W7NTF, K1DWU, WB3FFV, and KD6HWC for providing me with access to
+their hosts to test thebridge on platforms that I would not otherwise have 
+had access to.
+
+Thanks to XE1DVI, IK2XYP, WB5EGI, VK3JED, SM6TKT, W6FM, KD6HWC, W7NTF, VE3EI,
+and N2LEE/N4LED for helping Beta test thebridge.
+
+Thanks to the fine folks at sourceforge for hosting this and literally 
+thousands of other open source projects.  Please support the OSDN in anyway
+you can!
+
+
+################
+How you can help
+################
+
+1. Report all bugs. Please provide details on the version of thebridge, the
+operating systems, and operating conditions.  Log files and core dumps are 
+not only helpful but in many cases essential.
+
+2. Developers are welcome!  If you have ideas and would like contribute to the
+development please contact me.
+
+3. Documentation.  It's a well known fact that most programmers/engineers hate
+documentation and are usually poor writers.  We need to document the programs
+and protocols used by thebridge as well as other programs that will be written.
+The CQiNet web site could certainly use some input and a webmaster. If your 
+language of choice is not a programming language you can still help !
+
+wb6ymh@gfrn.org Dec 9, 2012

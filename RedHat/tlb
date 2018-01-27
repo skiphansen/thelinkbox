@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# description: Starts and stops thelinkbox node software
+#
+# chkconfig: - 73 15
+# pidfile: /var/run/tlb.pid
+# config:  /usr/local/etc/tlb.conf
+#
+# $Id: tlb,v 1.1 2008/09/07 20:19:02 wb6ymh Exp $
+
+
+# Source function library.
+if [ -f /etc/init.d/functions ] ; then
+  . /etc/init.d/functions
+elif [ -f /etc/rc.d/init.d/functions ] ; then
+  . /etc/rc.d/init.d/functions
+else
+  exit 0
+fi
+
+RETVAL=0
+
+
+start() {
+        echo -n $"Starting thelinkbox: "
+        daemon tlb
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && touch /var/lock/subsys/tlb || \
+           RETVAL=1
+        return $RETVAL
+}       
+
+stop() {
+        echo -n $"Shutting down thelinkbox: "
+        killproc tlb
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/tlb
+        return $RETVAL
+}       
+
+restart() {
+        stop
+        start
+}       
+
+reload() {
+        echo -n $"Reloading tlb.conf file: "
+        killproc tlb -HUP
+        RETVAL=$?
+        echo
+        return $RETVAL
+}       
+
+rhstatus() {
+        status tlb
+}       
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart)
+        restart
+        ;;
+  reload)
+        reload
+        ;;
+  status)
+        rhstatus
+        ;;
+  condrestart)
+        [ -f /var/lock/subsys/tbb ] && restart || :
+        ;;
+  *)
+        echo $"Usage: $0 {start|stop|restart|reload|status|condrestart}"
+        exit 1
+esac
+
+exit $?

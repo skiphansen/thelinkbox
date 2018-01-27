@@ -1,0 +1,499 @@
+package thelinkbox
+
+config package
+        option title 'Thelinkbox configuration'
+
+config section
+        option name     'global'
+        option title    'Global system configuration'
+        option package  'thelinkbox'
+        option unique   true
+        option required true
+
+config variable
+        option name     'ConferenceCall'
+        option title    'Node callsign'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        option required true
+
+config variable
+        option name     'ConferencePass'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        option required true
+
+config variable
+        option name     'ConferencePass'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+
+config variable
+        option name     'WorkingDir'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'directory'
+        
+config variable
+        option name     'ConferencePass'
+        option title    'EchoLink password'
+        option section  'thelinkbox.conference'
+        
+config variable
+        option name     'TTS_ExePath'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'file'
+        
+config variable
+        option name     'CallSignSpelling'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'PhoneticFilePath'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'file'
+        
+config variable
+        option name     'VoipDejitterDelay'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'ConfEnable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.conference'
+        option datatype 'boolean'
+
+config variable
+        option name     'ConferenceQth'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+
+config variable
+        option name     'ShowStatusInInfo'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'EmailAdr'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+
+config variable
+        option name     'DirServerHost'
+        option title    'EchoLink Directory server hostname'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'DirServerHost1'
+        option title    'EchoLink Directory server hostname #2'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'DirServerHost2'
+        option title    'EchoLink Directory server hostname #3'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'DirServerHost3'
+        option title    'EchoLink Directory server hostname #4'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'LoginInterval'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'EchoLinkEnable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'StationListInterval'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'InactiveDirTimeout'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'DtmfEncodeDuration'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'DtmfEncodePause'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'EnableRemoteDTMF'
+        option title    'EchoLink password'
+        option section  'thelinkbox.conference'
+        option datatype 'boolean'
+        
+config variable
+        option name     'AvrsEnable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.location'
+        option datatype 'boolean'
+        
+config variable
+        option name     'TxPower'
+        option title    'EchoLink password'
+        option section  'thelinkbox.location'
+        option datatype 'uint'
+        
+config variable
+        option name     'Latitude'
+        option title    'EchoLink password'
+        option section  'thelinkbox.location'
+        
+config variable
+        option name     'Longitude'
+        option title    'EchoLink password'
+        option section  'thelinkbox.location'
+        
+config variable
+        option name     'Haat'
+        option title    'EchoLink password'
+        option section  'thelinkbox.location'
+        option datatype 'uint'
+        
+config variable
+        option name     'AntGain'
+        option title    'EchoLink password'
+        option section  'thelinkbox.location'
+        option datatype 'uint'
+        
+config variable
+        option name     'AntDir'
+        option title    'Antenna Direction'
+        option section  'thelinkbox.location'
+        
+
+config variable
+        option name     'Frequency'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        
+config variable
+        option name     'RptOffset'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        
+config variable
+        option name     'CTCSS'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        
+config variable
+        option name     'AprsIsEnable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'AprsSymbolTable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'AprsSymbolCode'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'AprsObjectName'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'AprsIsComment'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'AprsIsInterval'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'EnableDiskCommands'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'AdminPass'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'SysopPass'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'RunAsUser'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'ConferenceID'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'MaxConferenceClients'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'SB_Enable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'UserCountEnable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'MaxCountEnable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'UserCountInLocation'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'PauseTime'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'BelchTime'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'DnsUpdateInterval'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'RunAsUser'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+        
+config variable
+        option name     'PrivateConference'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'LogFileRolloverType'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'ShowIPAddresses'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'FullDuplex'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'MaxPlayBackPause'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+        
+config variable
+        option name     'MinPlayBackPause'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'MaxPlayWithoutPause'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'WelcomeFile'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'file'
+
+config variable
+        option name     'WelcomeDelay'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'IdleTimeout'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'SaveInfoFiles'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+
+config variable
+        option name     'ShowStationInfo'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+
+config variable
+        option name     'Bind2IP'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'ip4addr'
+
+config variable
+        option name     'SF_Enable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+
+config variable
+        option name     'RTP_Pass'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+
+config variable
+        option name     'SF_Port'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'SF_ReplyPort'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'FullName'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'string'
+
+config variable
+        option name     'SFBind2IP'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'ip4addr'
+
+config variable
+        option name     'CompressionType'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'AsteriskEnable'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'boolean'
+        
+config variable
+        option name     'AsteriskPort'
+        option title    'Asterisk port number'
+        option section  'thelinkbox.global'
+        option datatype 'port'
+
+config variable
+        option name     'MinPlayBackPause'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config variable
+        option name     'MinPlayBackPause'
+        option title    'EchoLink password'
+        option section  'thelinkbox.global'
+        option datatype 'uint'
+
+config section
+        option name     'port'
+        option title    'port configuration'
+        option package  'thelinkbox'
+        option named    'true'
+
+config variable
+        option name     'AudioDevice'
+        option title    'Audio Device path'
+        option section  'thelinkbox.port'
+        option required true
+        option datatype 'device'
+
+config variable
+        option name     'DTMFCommandFile'
+        option title    'DTMF command definition file'
+        option section  'thelinkbox.port'
+        option datatype 'file'
+
+
+
+
+

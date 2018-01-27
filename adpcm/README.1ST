@@ -1,0 +1,18 @@
+The files in this subdirectory are not the complete distribution of the
+adpcm library, nor are they the most recent.  I've only included the files
+actually needed by CQiNet applications to minimize bloat.
+
+The files here were originally taken from the Unix version of Speak Freely.  
+Before using this code in other projects I would suggest that you visit the 
+original author's web site at:
+
+http://homepages.cwi.nl/~jack/
+
+At the time of this writing the most recent version of the code could be
+downloaded from:
+
+http://www.cwi.nl/ftp/audio/adpcm.zip
+
+Speak Freely for Unix may be downloaded from:
+
+http://www.fourmilab.ch/speakfree/unix/

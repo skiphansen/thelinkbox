@@ -1,0 +1,6 @@
+
+config 'system'
+	option 'hostname' 'thelinkbox'
+	option 'zonename' 'UTC'
+	option 'timezone' 'GMT0'
+

@@ -1,0 +1,513 @@
+; $Id: iMic.conf.sample,v 1.9 2009/02/14 18:23:08 wb6ymh Exp $
+;
+; This file shows all configuration variables for ports for reference.  
+; Not all of the variables are meaningfull for all hardware configurations.
+; Usually it's easiest to start with one of the hardware specific samples
+; for the kind of interface you're using.
+; 
+;
+###############################################################################
+; The following parameters specify how the radio is interfaced to the computer
+; All are required
+;
+
+; This variable creates a new port.  It should occur once and only once for 
+; each port in the system.  All of the port variables following this line
+; will apply to this and only this port.  Spaces are not allowed in port names.
+CreatePort = iMic
+
+; USB bus address.  This is the physical bus address indicating exactly where
+; the USB dongle will be connected.  See the documentation for detailed
+; information on how to deterine the correct address. If you only have one
+; USB audio dongle you do not need to set this variable.
+;AudioDongleAdr = 1-2.1
+
+; The following variable selects the method thelinkbox will use to key your
+; transmitter:
+; 0 - none
+; 1 - WB2REM / VA3TO style serial EchoLink interface boards
+; 2 - Parallel port (IRLP interface)
+; 3 - RTS
+; 4 - DTR
+; 5 - USB Audio dongle GPIO
+TxKeyMethod = 5
+
+; The following variable selects the method thelinkbox will use to determine
+; if your receiver is receiving a signal:
+; 0 - none
+; 1 - Vox
+; 2 - Parallel port (IRLP interface)
+; 3 - serial port CTS
+; 4 - serial port DSR
+; 5 - serial port DCD
+; 6 - device supporting /dev/input such as USB HID (Linux only)
+; 7 - USB device GPIO (use method 6 for the iMic)
+RxCosMethod = 6
+
+; Set the following variable to 1 if this port is a repeater.  When 
+; RepeaterPort is set the port's receiver is automatically linked to the
+; port's transmitter on startup.  Additionally the .unlink all and .unlink rf
+; commands will not tear down the repeater link. The link can still be 
+; broken by a explicit .unlink command.
+;RepeaterPort = 0
+
+
+; The following variable selects the method thelinkbox will use control the
+; radio associated with this port. 
+; 0 - none
+; 1 - Doug Hall protocol via parallel port (also set DH_DataBit, DH_ClockBit)
+; 2 - Doug Hall protocol via USB device GPIO (also set DH_DataBit, DH_ClockBit)
+;
+RadioCtrlMethod = 0
+
+; The following variable selects the method thelinkbox will use to determine
+; if a CTCSS tone is present on a received signal.  Note: must use the same
+; hardware interface as RxCosMethod, i.e. if the RxCosMethod is a line on
+; the serial port then RxCtcssMethod must be a different line on the same
+; serial port.
+; 0 - none
+; 1 - Software CTCSS decoder
+; 2 - Parallel port (IRLP interface)
+; 3 - serial port CTS
+; 4 - serial port DSR
+; 5 - serial port DCD
+; 6 - device supporting /dev/input such as USB HID (Linux only)
+; 7 - USB device GPIO (use method 6 for the iMic)
+RxCtcssMethod = 0
+
+; If you would like to add an CTCSS tone to the output audio stream you
+; can set the following variables.  NB: CTCSS tones are low frequencies
+; that will not be passed correctly by the microphone input of most radios.
+; 0 - Software CTCSS generation disabled
+; 1 - Mix CTCSS tone on audio output
+TxCtcssMethod = 0
+
+; CTCSS output level for TxCtcssMethod 1:  
+; 0 = no output, 32768 = full scale output.
+CTCSSLevel = 1000
+
+; The following variable sets the mode of CTCSS operation.
+; 0 - Carrier squelch only
+; 1 - Carrier and CTCSS
+; 2 - Carrier or CTCSS
+; 3 - CTCSS only
+; 4 - Carrier and NO CTCSS (anti-CTCSS)
+;
+; Mode 1 requires both CTCSS and carrier detect for the squelch to open, this
+;   is the mode typically used for CTCSS access.
+;
+; Mode 2 is sometimes useful when the carrier squelch is tight, in this mode
+;   the carrier squelch must open to begin reception, but the presence of
+;   CTCSS is enough to hold the squelch open.
+;
+; Mode 3 only requires CTCSS to open the squelch, COS is ignored. This 
+;   usually provides the most sensitive squelch.
+;
+; Mode 4 (Anti-CTCSS) maybe useful for a carrier squelch repeater with 
+;   overlapping coverage with a repeater that requires CTCSS.
+;
+; Note: Modes 2 and 3 usually result in an unacceptably long squelch tails
+;   when used with transmitters that do not implement reverse burst.
+;RxCTCSSMode = 1
+
+; The following variable selects the method thelinkbox will use to decode
+; DTMF tones:
+; 0 - none
+; 1 - WB2REM / VA3TO style serial EchoLink interface boards
+; 2 - IRLP parallel port interface
+; 3 - Software based DTMF decoder
+; 4 - Event based DTMF decoding from USB HID device (See DTMF_x_KeyCode)
+; 5 - Asterisk DTMF tunnelling protocol (Voip ports only) 
+DtmfMethod = 3
+
+; The name of the audio device to use:
+;  Typical values for the first sound card:
+;    FreeBSD /dev/dsp0
+;    Redhat Linux /dev/dsp
+;
+; If the audio device is an USB audio dongle you may set AudioDevice
+; to "auto" to have thelinkbox figure out the proper device audio device
+; 
+AudioDevice = auto
+
+
+; The following variable defines if this port is linked to incoming VoIP 
+; connections automatically.  If LinkVoipIn is set to zero on all ports then
+; inbound VoIP connections will not link to any port automatically allowing
+; the connections to be managed by scripts and commands entered by the VoIP 
+; user.
+;LinkVoipIn = 1
+
+; The following variable defines if this port is linked to outgoing VoIP 
+; connections automatically.
+;LinkVoipOut = 1
+
+; Transmitter hang time (carrier delay).  Amount of time transmitter PTT is 
+; held active after inputs have stopped in milliseconds.
+HangTime = 0
+
+; Transmitter timeout timer in seconds.  Set to zero to disable timeouts
+TxTimeout = 0
+
+; id of the ToneSpec of tone to play on transmitter timeout
+;TxTimeoutTone = 101
+
+; Receiver timeout timer in seconds.  Set to zero to disable timeouts.
+RxTimeout = 0
+
+; id of the ToneSpec of tone to play on receiver timeout
+;RxTimeoutTone = 101
+; Key Code for the event indicating COS active for RxCosMethod 6. 
+; See /usr/include/linux/input.h
+; For example if you have your COS connected to an input on a USB audio dongle
+; that is normally used to increase the volume you would use a value of 115.
+; 
+; This is indicated by the line:
+;   #define KEY_VOLUMEUP           115
+;  in /usr/include/linux/input.h.
+;
+; The default value for an iMic is 115
+COS_KeyCode = 115
+
+
+; When CtoneResetsTimeout = 0 the transmitter timeout timer is reset when 
+; the transmitter unkeys. By setting CtoneResetsTimeout = 1 the timeout timer 
+; is reset when the courtesy tone is played.  
+; Typically this is used on a repeater to discourage long winded transmissions 
+; without requiring user to wait for the hangtime to expire.
+CtoneResetsTimeout = 0;
+
+; If the sound board input is connected directly to the discriminator of your
+; receiver set this variable.
+;
+;DiscFeed = 1
+
+; If the sound board input is connected directly to the discriminator of an
+; FM receiver then set this variable.  Audio sent across VoIP links should be
+; flat, setting this variable applys deemphasis to the received signal to
+; cancel the preemphasis applied by the FM transmitter. 
+;RxDeemphasis = 0
+
+; If the sound board output is connected directly to an FM modulator then 
+; set this variable.  If the sound board output is connected to the microphone
+; input of an FM transmitter do not set this variable since the transmitter
+; itself will apply the preemphasis.
+;TxPreemphasis = 0
+
+; Set the following variable to insert an high pass filter in the 
+; transmitter's audio path to prevent received CTCSS tones from being repeated.
+; The filter is disabled by default for physical ports and enabled by default 
+; for VoIP ports.  Note: to avoid excessive rolloff of the lower end of the 
+; voice frequency range the filter is designed to filter out tone frequencies 
+; of 203.5 and lower, 250 Hz is only attenuated by 6.6 db.  This provides an 
+; attenuation of .75 db at 300 hz and essentially no attenuation at 500 hz.
+;TxCtcssFilter = 1
+
+; If the sound board input is connected to an audio source that is not gated 
+; by COS (it has noise on it when no one is talking) then set this 
+; variable, optional.
+;
+; An interesting problem occurs when the input audio source is unsquelched,
+; namely you may hear a "squelch tail" at the beginning of transmissions!
+; This is caused by the asynchronous nature of the COS signal in relationship
+; to the audio input buffer.  When UngatedRx is set the first audio buffer
+; following the rising edge of COS is tossed to eliminate leading squelch tails.
+;UngatedRx = 1
+
+###############################################################################
+; The following parameters are used for repeaters using tone burst to control
+; access (typical in Europe)
+
+; Set the following variable to require a toneburst to activate this port's
+; transmitter.
+; 0 - tone burst not required
+; 1 - tone burst required to key up repeater initially.
+; 2 - tone burst or CTCSS required to key up repeater initially.
+;ToneBurstMode = 0
+
+; Set the following variable to the toneburst frequency for this receiver
+;ToneBurstFreq = 1750
+
+; Set the following variable to mute tonebursts
+; 0 - tone burst mute disabled
+; 1 - mute the toneburst that initially enables the transmitter
+; 2 - mute all tonebursts
+;ToneBurstMute = 1
+
+; Set the following variable to the number of seconds of inactivity 
+; (transmitter unkeyed) before requiring a ToneBurst to enable the 
+; transmitter again.
+;ToneBurstTimeout = 15
+
+; id of the ToneSpec to play when ToneBurstTimeout expires
+;ToneBurstToneID = 107
+
+; Set the following to simulate the reception of a toneburst on this
+; port's *receiver*. This variable will typically be set on link ports and 
+; VoIP ports to allow them to key a transmitter that normally requires a 
+; tone burst.
+;FakeToneBurst = 1
+
+###############################################################################
+; The following parameters are used for the parallel port Tx and Rx methods
+; (TxKeyMethod 2 and RxCosMethod 2).  The default values are appropriate
+; for IRLP interfaces.
+;PTT_Bit = 2
+;COS_Bit = 128
+;CTCSS_Bit = 128
+
+; Set this variable to invert the sense of the COS_Bit
+;InvertCOS = 1
+
+; Set this variable to invert the sense of the PTT_Bit
+;InvertPTT = 1
+
+; Set this variable to invert the sense of the CTCSS_Bit
+;InvertCTCSS = 1
+
+###############################################################################
+; DTMF variables that apply to all DTMF methods
+
+; Filename of file that defines commands for this RF port.
+; note: this is a port variable each ports can have different command sets.
+DTMFCommandFile = tlb.cmds
+
+; Maximum amount of time between DTMF digits in milliseconds.  Commands
+; are decoded at the end of a transmission or when there is a pause of
+; more than DTMFCommandTimeout milliseconds between digits.
+; DTMFCommandTimeout = 1000
+
+; Set the following variable to stop DTMF transmissions to this port's 
+; transmitter.  This is typically set for repeater and remote base ports and 
+; unset for link ports.
+MuteDTMF = 1
+
+; The minimum amount of time between repeated digits in milliseconds. Users
+; in marginal areas, marginal decoders, incorrect levels or other problems 
+; can cause a single DTMF digit held longer than the decoder's decode time 
+; to be decoded multiple times.  This variable specifies a minimum delay time 
+; between identical digits for them to be accepted as distinct entries. 
+;MinDtmfInterdigitTime = 100
+
+; Some user's voices sound enough like touchtones to cause false decodes. If
+; MuteDTMF is active such false decodes will cause the user's transmission 
+; to be muted for DTMFCommandTimeout unless something is done about it.
+; The following two variables attempt to mitigate such problems.
+;
+; The following variable defines the minimum amount of time in millisedconds 
+; that a DTMF digit that initiates a DTMF command sequence is held.  If the 
+; digit (or voice false) is decoded for less than this time a DTMF command 
+; sequence is not started and if the audio was muted by MuteDTMF it is 
+; unmuted.  This minimum only applies to the first digit of a command 
+; sequence, the remaining digits may be entered as fast as the decoder will 
+; take them.
+; Min1stDigitHoldTime = 250
+;
+; The following variable defines which DTMF digits start a DTMF command
+; sequence.  For command lists that start all command sequences with a common 
+; digit there is no point in muting audio for anything other than that digit.  
+; By default all digits start a DTMF command sequence.
+;Dtmf1stDigits = *#
+
+; The following variable specifies a tone to play while a audio is muted
+; because a DTMF command sequence is in progress.  The tone is cancelled
+; automatically when the command sequence is completed.
+;DtmfCoverTone = 106
+
+; The following variable specifies if CTCSS is required to enter DTMF commands.
+;
+; 0 - CTCSS not required (even if CTCSS is enabled by RxCTCSSMode)
+; 1 - CTCSS required if CTCSS is enabled by RxCTCSSMode
+; 2 - CTCSS always required
+;
+;DtmfCTCSSMode = 1
+
+; The following variable assigns a prefix that must be entered before DTMF
+; commands are decoded.  When the prefix is decoded the DtmfCoverTone will
+; start and command will be accepted until the PrefixTimeout expires.
+;DTMFPrefix = *#A
+
+; The following variable provides an alternate to DtmfCoverTone when a 
+; DTMFPrefix is used.  The DtmfCoverTone begins running when any DTMF digit
+; is decoded and continues running as long as digits are being entered.
+; The PrefixedTone starts when the DTMFPrefix is decoded, but ends when
+; the first command digit is decoded.
+;PrefixedTone = 104
+
+; Prefix timeout in milliseconds.  This variable defines how long the 
+; prefix remains active without entering a command.  Once a command has been 
+; entered the prefix remains  active until a DTMFCommandTimeout occurs.
+;PrefixTimeout = 8000
+
+
+###############################################################################
+; Software DTMF decoder tuning parameters for DtmfMethod 3.
+; If your touchtone pad has more twist than allowed by the the Bellcore 
+; specification decoded touchtones will be ignored.  The following variables 
+; allow you to lower the limits if necessary.  NB: increasing the acceptable 
+; twist will probably make the touchtone decoder more succeptable to voice 
+; falsing.  Change only if your touchtone encode pad does not work with the 
+; default values.
+; Accepted twists, in dB.  twist = low tone louder than high tone,
+; reverse twist high tone louder than low tone.
+;
+;Twist = 15
+;ReverseTwist = 15
+
+
+###############################################################################
+; The following parameters control CW and voice station identification
+
+; Frequency of ID tone in Hertz.
+CWToneFreq = 900
+
+; 
+CWToneLevel = 2000
+
+; CW speed in words per minute
+CWSpeed = 20
+
+; CW id text
+CWId = de w1aw
+
+; Set this to the number of seconds between IDs.
+IdInterval = 600
+
+; Set this to cause the ID to be sent every CWIdInterval if there is activity
+; or not.  Normally the ID is sent every CWIdInterval only when there was
+; activity during the last CWIdInterval seconds
+
+CWAutoJam = 0
+
+; Number of seconds that the channel must have been idle before a Voice ID
+; is played.  
+VoiceIDIdleTime = 15
+
+; Name of wave file containing voice ID
+;VoiceId
+
+; Set this if your RF link is half duplex.  This is prevent the transmitter
+; from keying while you are talking.
+HalfDuplexRF = 1
+
+
+###############################################################################
+; The following tune the Vox delays if you were too lazy to hook up a real
+; carrier detect circuit.
+
+; This variable specifies the minumum input level to trip the Vox.
+VoxThreshold = 4000
+
+; This variable specifies the number of milliseconds of an input level below
+; the VoxThreshold before the vox unkeys the transmitter
+VoxHoldTime = 1250
+
+###############################################################################
+; Courtesy tone variables
+
+; id of the ToneSpec for the courtesy tone sound.
+;Ctone = 102
+
+; Map of ports to send the courtesy to when this ports receiver loses
+; signal.  For example if this port is the main input of a remote base
+; system you may want the courtesy sent to the remote's main output but you
+; almost certainly do not want the courtesy tones to be sent to 2 meter 
+; remote base.
+;
+; Conversely you may want a courtesy tone to be generated on the main output
+; by the 2 meter receiver, but it would be a poor idea for the 2 meter
+; receiver to send a courtesy tone out on 2 meters.
+;CtoneMap = 2meters,70cm
+
+; Delay in milliseconds from signal loss to courtesy tone.  If a new signal 
+; is received before the delay expires the courtesy will not be generated.
+;CtoneDelay = 250
+
+; Software CTCSS decode threshold.  If desired the decoder threshold can be
+; adjusted to just decode a singal with the minimum acceptable amount of
+; CTCSS deviation.  Too low of a threshold will result in false decodes, too
+; high of a threshold will prevent successful decode.
+;CtcssRxThreshold = 6000
+
+; By default Voip connections and disconnections are announced to the ports
+; they are linked to. You may disable these voice announcements by setting 
+; the following variable to zero.  
+;ConnectAnnouncements = 1
+
+###############################################################################
+; This variables define where a Doug Hall interface is connected on the
+; parallel port or USB Dongles GPIO lines.
+;
+DH_DataBit = 32
+DH_ClockBit = 16
+
+
+###############################################################################
+; Ax25 specific variables
+
+; Set this to the number of milliseconds of idle tone sent before data.  
+; Provides time for the transmitter to get on the air and the receiver to 
+; lock to the signal.
+;Ax25TxDelay = 100
+
+; This variable sets the level of the Ax25 modem tones.  32768 = max
+;Ax25ToneLevel = 16000
+
+; Set this variable to the number of seconds between Ax25 beacons.  Note:
+; Ax25 beacons are sent just before the transmitter is unkeyed when the time 
+; since the last beacon exceeds Ax25BeaconInterval.  Ax25 beacons will not 
+; be started while the transmitter is sending other traffic.
+; CTCSS is not encoded during the Ax25 beacon to allow users equipped with
+; CTCSS decoders to avoid hearing the beacons.
+;Ax25BeaconInterval = 0
+
+; Set the following variable to the Ax25 destination for Ax25 beacon packets
+;Ax25BeaconPath=QST
+
+; Set the following variable with the text for your beacon.  
+;Ax25BeaconText = I'm a repeater and proud of it!
+
+###############################################################################
+; Over the air APRS specific variables (the global avrs variables in
+; the main system configuration and the Ax25 variable above must also be set
+; for these variables to have any effect)
+
+; Set this variable to send an APRS object in the Ax25 beacon.
+; The APRS object's comment field is set to this ports frequency, offset and 
+; CTCSS unless the Ax25BeaconText variable above is set.
+;Ax25BeaconAPRS=1
+
+; Set this variable to send to send your transmitter power, antenna
+; height and antenna gain in APRS packets sent via RF.
+; NB: The Kenwood D7 and D700 radios are confused by these values and
+; they are not very readable to humans since each value is encoded into
+; a single digit
+;EnableRfPHG = 0
+
+; The following port specific variables override the global variables of the
+; same name.  This is useful for a multiband repeater system when it is
+; desirable to beacon different information on each band.
+; Transmitter power in watts
+;TxPower = 10
+
+; Antenna height above average terrain in feet
+;Haat = 100
+
+; Antenna gain in DB
+;AntGain = 3
+
+; Heading of the main antenna lobe in degrees.
+; If antenna is an omni enter 0.0, if the antenna is directional and pointed 
+; due north enter 360.0.
+;AntDir = 0.0
+
+; Transmitter frequency in Mhz
+;Frequency = 146.52
+
+; Receiver offset from transmitter in Mhz for repeaters, leave unset for
+; simplex nodes.
+;RptOffset = -.6
+
+; Continuous tone coded squelch system system frequency required to open
+; receiver's squelch. In Hertz.  Leave unset for carrier squelch system
+;CTCSS = 100.0

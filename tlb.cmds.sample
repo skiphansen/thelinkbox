@@ -1,0 +1,69 @@
+; $Id: tlb.cmds.sample,v 1.3 2009/09/13 20:15:50 wb6ymh Exp $
+; This file defines the commands that thelinkbox will execute when a
+; specified string of DTMF buttons are received.
+;
+; When thelinkbox receives a string of DTMF buttons it searches the commands 
+; in the current command file in order and then executes the first command 
+; that matches the entered DTMF string.  If more than one command matches 
+; the entered command only the first command will be executed.
+;
+; Lines beginning with ';' are comments, if you decide to set any of the
+; optional commands be sure to delete the leading ';' character before the 
+; line.
+;
+; Each command is defined by one or more DTMF digits followed by an
+; equals sign then the commands to execute.  Multiple commands are seperated 
+; by a ';'.
+;
+; There are 16 possible DTMF buttons defined by '0' -> '9', 'A' -> 'D', plus
+; '*' and '#'.  Note: Some DTMF interfaces do not decode all of the 4'th row 
+; digits so be sure your hardware supports them before using 'A' -> 'D'  
+; (IRLP board don't support 'D', VA3TO cards use 'C' and 'D' to control the 
+; AUX relay.  There may be other limitations for other interfaces)
+;
+; The '?' wildcard character matches any single button.
+; The '+' wildcard character will match all remaining buttons.
+;
+; Within command strings the following special variables may be used:
+;   $1 - is replaced by the entire DTMF command 
+;   $2 - is replaced by the digits matched by the '?' or '+' wildcards
+;   $TLB_PORT - is replaced by the name of the port that issued the command
+;
+; A command file may include another command file by "include <filename>".
+; The include keyword must start in column one.
+; 
+
+; Command to disconnect the last station that connected
+# = disconnect last; sayresult
+
+; Command to disconnect all connnected stations.
+## = disconnect all; sayresult
+
+; Command to disabled transmissions to the Internet
+0511 = set monitor = 1; sayresult
+
+; Command to enable transmissions to the Internet
+0510 = set monitor = 0; sayresult
+
+; Command to report node status
+08 = saystatus
+
+; Command to kill announcements going to RF port ... of course is
+; this command isn't very useful if your RF link isn't full duplex!
+107 = shutup
+
+; example of script command to play the weather report
+
+411 = script ./weather
+
+;Connect to newsline server
+*6397  = connect -s -a -p 2074 newsline.thelinkbox.net
+
+;Commands to connect to 4, 5 and 6 digit EchoLink node numbers
+???? = connect $1; sayresult
+????? = connect $1; sayresult
+?????? = connect $1; sayresult
+
+;Command that is executed when none of the above commands are matched.
++ = say I'm sorry Dave, I'm afraid I can't do that
+

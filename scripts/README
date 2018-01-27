@@ -1,0 +1,51 @@
+These files implement a DTMF regeneration scheme for systems that use 
+site prefixes.  See prefix.sh for more information.
+This directory contains sample command files, scripts, and programs that 
+enhance the operation of thelinkbox.
+
+---
+program: usermgmt.cgi
+author: Ken KC4YOZ
+homepage: http://metro-uhf.org/kdj/scripts/usermgmt.cgi
+
+usermgmt is a CGI script used to control the *LINUX* and *NC* conferences.
+It's written in BASH so it's portable across Linux platforms, just requires a 
+properly configured Apache server.  See the user settings at the top before 
+you install it.
+
+---
+program: getnews.sh
+
+getnews is a script that can be run as a cron job to fetch the weekly 
+Amateur Radio Newsline report and format it for playback by thelinkbox.
+
+---
+files: phonetic.us phonetic.ansi phonetic.ham
+
+These are phonetic alaphabet lookup tables.  If you would like callsigns
+to be spelled out phonetically then set the configuration file variable 
+PhoneticFilePath to point to one of these files.
+
+---
+script: freqctrl.sh
+
+Example DTMF command script to set the transmit, receive and CTCSS 
+frequencies for a remote base.  
+
+---
+Files: prefix.sh, regen.cmds, regen.sh
+
+These files implement a DTMF regeneration scheme for systems that use 
+site prefixes.  See prefix.sh for more information.
+
+---
+script: voiceid.sh
+
+Example script to play a rotating set of prerecorded voice IDs periodically 
+to a port when idle.
+
+---
+script: saytime.sh
+
+Example script to announce the time of day.
+

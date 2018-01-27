@@ -1,0 +1,18 @@
+The soundmodem project is a multiplatform Soundcard Packet Radio Modem
+by Thomas Sailer, HB9JNX/AE4WA.
+
+The files in this subdirectory are not the complete distribution of the
+soundmodem project, nor are they necessarily the most recent.  I've only 
+included the files actually needed by CQiNet applications to minimize bloat.  
+
+The files here were originally taken from soundmodem-0.10.tar.gz.  Before 
+using this code in other projects I would suggest that you visit the original 
+author's web site at:
+
+http://www.baycom.org/~tom/ham
+
+At the time of this writing the most recent version of the code could be
+downloaded from:
+
+http://www.baycom.org/~tom/ham/soundmodem/soundmodem-0.10.tar.gz
+

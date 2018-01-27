@@ -1,0 +1,20 @@
+How to build from cvs:
+
+If you have the GNU autotools (autoconf, automake, libtool, etc)
+
+./bootstrap
+make (or gmake on BSD systems)
+
+GNU make is required when building from CVS, on BSD systems GNU make is
+usually called gmake.
+
+If you do not have GNU autotools then download, configure and build a release
+tarball and then:
+
+1. Copy the resulting Makefiles from each subdirectory into the CVS working 
+   directories.
+2. Copy config.h (or config.h.win32 on Window systems) into the top level 
+   subdirectory.
+3. Edit config.h (or config.h.win32) and set VERSION to the level found
+   in configure.in, this is optional but saves confusion.
+4. run GNU make.

@@ -1,0 +1,18 @@
+Spandsp is a library of many DSP functions for telephony. These range from 
+simple modules, such as DTMF detection, to a complete software FAX machine.
+
+The files in this subdirectory are not the complete distribution of the
+spandsp library, nor are they the most recent.  I've only included the files
+actually needed by CQiNet applications to minimize bloat.  
+
+The files here were originally taken from spandsp-0.0.3pre28.tgz.  Before 
+using this code in other projects I would suggest that you visit the original 
+author's web site at:
+
+http://www.soft-switch.org
+
+At the time of this writing the most recent version of the code could be
+downloaded from:
+
+http://www.soft-switch.org/downloads/spandsp/spandsp-0.0.3pre29.tgz
+

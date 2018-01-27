@@ -1,0 +1,75 @@
+diff -Naur blueroot.orig/etc/config/system blueroot/etc/config/system
+--- blueroot.orig/etc/config/system	2009-05-01 08:39:50.000000000 -0700
++++ blueroot/etc/config/system	2009-05-27 08:36:11.000000000 -0700
+@@ -1,3 +1,6 @@
+-config system
+-	option hostname	OpenWrt
+-	option timezone	UTC
++
++config 'system'
++	option 'hostname' 'thelinkbox'
++	option 'zonename' 'UTC'
++	option 'timezone' 'GMT0'
++
+diff -Naur blueroot.orig/etc/opkg.conf blueroot/etc/opkg.conf
+--- blueroot.orig/etc/opkg.conf	2009-05-10 14:19:07.000000000 -0700
++++ blueroot/etc/opkg.conf	2009-05-27 08:36:41.000000000 -0700
+@@ -1,4 +1,4 @@
+-src/gz snapshots http://downloads.openwrt.org/snapshots/x86/packages
++src/gz snapshots http://download.thelinkbox.net/packages/target-i386_glibc-2.3.6
+ dest root /
+ dest ram /tmp
+ lists_dir ext /var/opkg-lists
+diff -Naur blueroot.orig/etc/passwd blueroot/etc/passwd
+--- blueroot.orig/etc/passwd	2009-05-01 08:39:50.000000000 -0700
++++ blueroot/etc/passwd	2009-05-27 08:36:59.000000000 -0700
+@@ -1,3 +1,3 @@
+-root:!:0:0:root:/root:/bin/ash
++root:$1$25jKWCK1$JcVQy6CDMKZG/JrUtsGjK/:0:0:root:/root:/bin/ash
+ nobody:*:65534:65534:nobody:/var:/bin/false
+ daemon:*:65534:65534:daemon:/var:/bin/false
+diff -Naur blueroot.orig/usr/lib/lua/luci/controller/admin/network.lua blueroot/usr/lib/lua/luci/controller/admin/network.lua
+--- blueroot.orig/usr/lib/lua/luci/controller/admin/network.lua	2009-05-21 07:32:30.000000000 -0700
++++ blueroot/usr/lib/lua/luci/controller/admin/network.lua	2009-05-27 08:37:22.000000000 -0700
+@@ -24,25 +24,6 @@
+ 	page.order  = 50
+ 	page.index  = true
+ 
+-	local page  = node("admin", "network", "vlan")
+-	page.target = cbi("admin_network/vlan")
+-	page.title  = i18n("a_n_switch")
+-	page.order  = 20
+-	
+-	local page = entry({"admin", "network", "wireless"}, arcombine(cbi("admin_network/wireless"), cbi("admin_network/wifi")), i18n("wifi"), 15)
+-	page.i18n   = "wifi"
+-	page.leaf = true
+-	page.subindex = true
+-	
+-	uci:foreach("wireless", "wifi-device",
+-		function (section)
+-			local ifc = section[".name"]
+-				entry({"admin", "network", "wireless", ifc},
+-				 true,
+-				 ifc:upper()).i18n = "wifi"
+-		end
+-	)
+-	
+ 	local page = entry({"admin", "network", "network"}, arcombine(cbi("admin_network/network"), cbi("admin_network/ifaces")), i18n("interfaces", "Schnittstellen"), 10)
+ 	page.leaf   = true
+ 	page.subindex = true
+diff -Naur blueroot.orig/usr/lib/lua/luci/controller/admin/system.lua blueroot/usr/lib/lua/luci/controller/admin/system.lua
+--- blueroot.orig/usr/lib/lua/luci/controller/admin/system.lua	2009-05-21 07:32:30.000000000 -0700
++++ blueroot/usr/lib/lua/luci/controller/admin/system.lua	2009-05-27 08:40:32.000000000 -0700
+@@ -27,12 +27,7 @@
+ 	entry({"admin", "system", "processes"}, form("admin_system/processes"), i18n("process_head"), 45)
+ 	entry({"admin", "system", "fstab"}, cbi("admin_system/fstab"), i18n("a_s_fstab"), 50)
+ 
+-	if luci.fs.isdirectory("/sys/class/leds") then
+-		entry({"admin", "system", "leds"}, cbi("admin_system/leds"), i18n("leds", "LEDs"), 60)
+-	end
+-
+ 	entry({"admin", "system", "backup"}, call("action_backup"), i18n("a_s_backup"), 70)
+-	entry({"admin", "system", "upgrade"}, call("action_upgrade"), i18n("admin_upgrade"), 80)
+ 	entry({"admin", "system", "reboot"}, call("action_reboot"), i18n("reboot"), 90)
+ end
+ 

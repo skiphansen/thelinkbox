@@ -1,0 +1,9 @@
+; This command file is part of a DTMF regeneration scheme for systems 
+; that use site prefixes.  See prefix.sh for more information.
+;
+; $Id: regen.cmds,v 1.1 2008/06/21 15:55:22 wb6ymh Exp $
+; just pass all commands received to the regen script
+
++ = script ./regen.sh $1
+
+

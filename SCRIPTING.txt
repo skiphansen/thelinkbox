@@ -1,0 +1,226 @@
+Thelinkbox's scripting capability provides users with the ability to customize 
+and enhance the operation of thelinkbox by the addition of external programs.
+External programs can be used to add new user commands, as well as monitor 
+and control the operation of thelinkbox.
+
+Ham radio is (should be) about experimentation, hopefully this capability
+combined with your imagination will lead to some interesting new applications
+for thelinkbox.  
+   
+There are two sides to the scripting interface, the event hook and the external 
+command interface.  They are completely independent, you can use one or the 
+other or both. 
+
+External Command Interface
+--------------------------
+
+There are two ways for external programs to control thelinkbox, the easy way
+and the hard way.  Which method is easy and which method is hard depends
+greatly on the user's experience and viewpoint.  At the lowest level thelinkbox
+listens to a UDP port on the local machine (only) for commands.  Users that 
+have network programming experience may find this to be the easiest way to 
+communicate with thelinkbox.  Users without network programming experience may 
+prefer to use the tbdcmd command line utility that is included in the release.
+
+The external command interface is disabled by default, to enable it add 
+the following to your configuration file:  
+
+CmdPort = 5198
+
+This specifies the UDP port number that thelinkbox will use for communications 
+with other programs ON THE SAME MACHINE.  Since I have made no attempt to 
+secure the command port thelinkbox only listens to the loopback port.  This 
+prevents commands from being sent thelinkbox from other computers. Other port
+numbers can be used if desired, 5198 is simply the default for tbdcmd.
+
+When the command port is enabled in the configuration file thelinkbox listens 
+for ASCII commands to be sent to it on the specified UDP port.  Command 
+results are sent in a single UDP packet back to the originating port.
+All commands return one or more lines of data in the packet.  Each line is 
+delimited by a newline (0x0a) character.  This first line is a numeric result 
+(in ASCII) code with zero meaning successful command completion.  Remaining 
+lines contain any output the command generates.
+
+When enabled by the .chat command text messages received from the net are
+sent asynchronous to the command port prepended by an error code of 200010.  
+When the chat mode is active text not proceeded by ".." are sent as text 
+messages.  Therefore the only way out of chat mode is to enter the command 
+"..chat off". Although the normal mode of operation does not require dots to 
+be prepended to commands they are allowed so there is no need to track the 
+chat mode state.
+
+NB: Although the .chat mode feature is still supported it is depreciated. 
+Version 0.84 and later of thelinkbox provides a separate port for text messages
+to replace the .chat mode.  
+
+Error Codes
+-----------
+
+0      - Command executed without error
+200001 - command not found or ambiguous
+200002 - command requires disk and disk is disabled
+200003 - Specified station not found
+200004 - no info available for station (.info cmd)
+200005 - invalid command argument count
+200006 - Already connected (.connect cmd)
+200007 - no one is talking (.mute cmd)
+200008 - invalid command argument
+200009 - error opening a file
+200010 - Chat text
+200011 - Timeout waiting for response from tbd.
+200012 - Chat text sent
+
+tbdcmd
+------
+   
+The tbdcmd command line utility is provided to allow external programs or 
+scripts to control the operation of the thelinkbox without having to deal 
+with network programming.  Almost any programming or scripting language 
+includes some way to execute a command line program.  
+
+Tbdcmd can be used in either a command at a time mode or interactively.  The
+interactive mode is a convenient way for an administrator to control thelinkbox 
+locally without having to connect to the conference via EchoLink.  The command
+at a time mode is probably the most convenient mode for scripting.
+
+To use tbdcmd interactively just start thelinkbox and run tbdcmd.  You should 
+be able to enter command just like you do via EchoLink.  The dot is 
+optional since *only* commands are sent, not message text.  Hit control-C or 
+enter a blank line to exit.
+
+You can also run tbdcmd with a command to execute on the command line.  For 
+example: "tbdcmd help".  The exit code will be 0 if the command is ok,
+otherwise one of the error codes listed above will be returned.  Tbdcmd writes 
+all output to stdout.  Output can be capture using I/O redirection provided by 
+the operating system or scripting language.  For simple scripts the completion
+code may be sufficient.
+
+Usage: tbdcmd [-p<port>] [-q] [-s] [-S] [-t] [commands]
+        -p - Specify cmdline port (default 5198).
+        -q - Quiet, numeric result code only.
+        -S - Allow conference bridge's station list (default is suppress).
+        -s - Slient, suppress banner.
+        -t - Add timestamps to text chat messages.
+
+tbdchat
+-------
+
+The tbdchat command is an alias for tbdcmd that uses port 5199 by default. 
+The chat interface is disabled by default, to enable it add the following to 
+your configuration file:  
+
+ChatPort = 5199
+
+Event Hook
+----------
+
+Thelinkbox that can also be configured to call an external scripts or programs
+when "interesting" things happen.  
+
+To enable Event Hooks set the configuration file variable "EventScript" to 
+the full path  of the script or program to execute.  The first argument on 
+the command line given to the script will always be the event type, the 
+rest of the command line depends on the event type.
+
+In general the event script should not generate any console output since 
+thelinkbox normally runs as a daemon in the background without a console. 
+Since thelinkbox waits for the script to finish before executing it again for 
+the next event the script should exit immediately after performing it's 
+function.  Delays in script execution will not adversely effect normal operation
+of thelinkbox, it will only delay future event notifications.  
+
+The following events are defined currently:
+
+Event: "connected"
+Arguments: <type> <callsign> <user_count>
+
+This event is generated when a new user connects to the conference.
+<type> is the type of connection which can be "speakfreely", "rtp", 
+"echolink", or "outbound".  "outbound" means the connection was a result 
+of a previous ".connect" command and infers a EchoLink connection.
+
+<callsign> is the callsign of the user that connected.
+<user_count> is the number of total number of users connected to the conference.
+
+Event: "disconnected:
+Arguments: <reason> <callsign> <user_count>
+
+This event is generated when a user leaves the conference.
+
+<reason> can be "bye" when a user disconnects normally, or "rtcp_timeout" when
+the user times out.
+<user_count> is the number of total number of users connected to the conference.
+
+Event: "playbackcomplete"
+Arguments: <callsign> <reason>
+
+This event is generated when a file playback is completed.
+
+<reason> can be "CreateNewClient() failed" (an internal error), 
+"starting new playback" (user did a new .play before the previous playback 
+ended), "stop command", "playback complete", "write error 1" (disk write 
+error during a .test command), "write error 2" (disk write error in another 
+place in the code), or "rtcp timeout".
+
+Event: "command"
+Arguments: [<command arguments>]
+
+This event is generated when a user enters an *undefined* command.  
+This allows thelinkbox's built in command set to be extended by external 
+scripts.  This feature might be used to define macros such as ".netstart" 
+which might, for example, automatically connect to other nodes which wish
+to be brought into a net.
+
+<command arguments> are any arguments that were entered by the user.
+
+Event: "hostfile"
+Arguments: (none)
+
+This event is generated when thelinkbox updates the *nix style hostfile when
+thelinkbox has been configured to generate one.
+
+Event: "starting"
+Arguments: (none)
+
+This event is generated when thelinkbox starts up.
+
+Event: "shutdown"
+Arguments: (none)
+
+This event is generated when thelinkbox shuts down.
+
+Event: "dtmfdecode"
+Arguments: <DTMF Digit> <port name>
+
+This event is generated when a DTMF tone is decoded.  The DTMF digit is 'N'
+when the button is released.  For example when a user punches "12#" on his
+DTMF pad the event script will be called 6 times with <DTMF digits> of
+"1", "N", "2", "N", "#", "N".
+
+Event: "chat"
+Arguments: <Chat text>
+
+This event is generated when a chat message is received from a user. 
+Note: The entire chat message appears in the first argument, it is not
+passed as one word per argument like other events.
+
+Event: "sent_chat"
+Arguments: <Chat text>
+
+This event is generated when a chat message is sent by the .message command
+or via tbdchat. Note: The entire chat message appears in the first argument, 
+it is not passed as one word per argument like other events.
+
+Event: ctcss_decode
+Argument: <port name> <ctcss tone frequency>
+
+This event is generated when a ctcss tone is decoded and the port's RxTone
+is set to either "any" or "search".  This event is not generated when a
+port's RxTone is set to a specific frequency.  
+
+Special commands useful for in scripts
+
+".message [message text]"
+
+This command sends a text message to all stations connected to the conference.
+

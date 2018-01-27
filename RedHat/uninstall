@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# description: remove thelinkbox startup scripts on RedHat Linux (System V like)
+# $Id: uninstall,v 1.1.1.1 2007/04/07 23:55:39 wb6ymh Exp $
+
+set -x
+rm /usr/sbin/tlb
+rm /etc/rc.d/init.d/tlb
+rm /etc/rc.d/rc0.d/K73tlb
+rm /etc/rc.d/rc1.d/K73tlb
+rm /etc/rc.d/rc2.d/S73tlb
+rm /etc/rc.d/rc3.d/S73tlb
+rm /etc/rc.d/rc4.d/S73tlb
+rm /etc/rc.d/rc5.d/S73tlb
+rm /etc/rc.d/rc6.d/K73tlb
+cd ..
+make uninstall
+cd RedHat
+

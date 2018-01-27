@@ -1,0 +1,20 @@
+WorkingDir = /tmp/tlb
+DirServerHost1 = server2.echolink.org
+DirServerHost2 = server3.echolink.org
+DirServerHost3 = server4.echolink.org
+ToneSpec = id 100 tf1 900 dur 100
+ToneSpec = id 101 tf1 330 dur 100 : tf1 500 dur 100 : tf1 660 dur 100
+ToneSpec = id 102 tf1 330 dur 50 : tf1 500 dur 50 : tf1 660 dur 50
+ToneSpec = id 103 tf1 440 tf2 500 dur 200 : tf1 440 tf2 350 dur 200
+ToneSpec = id 104 tf1 350 tf2 440 dur 10000
+ToneSpec = id 105 tf1 440 tf2 480 dur 2000 : dur 4000 : rpt 10
+ToneSpec = id 106 tf1 480 tf2 620 dur 500 : dur 500 : rpt 10
+ToneSpec = id 107 tf1 941 tf2 1336 dur 100
+ToneSpec = id 108 tf1 700 dur 1000 : dur 10000 : rpt 10
+ToneSpec = id 109 dur 920 : tf1 1633 dur 60 : dur 60 : tf1 1209 dur 60
+ToneSpec = id 110 dur 700 : tf1 1209 dur 80 : dur 80 : tf1 1209 dur 80
+ToneSpec = id 111 dur 800 : tf1 697 dur 180
+ToneSpec = id 112 dur 920 : tf1 1633 dur 60 
+CmdPort = 5198
+TTS_ExePath = /usr/bin/flite
+

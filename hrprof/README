@@ -1,0 +1,34 @@
+hrprof - High Resolution Profiling
+http://sourceforge.net/projects/hrprof
+
+Pace Willisson <pace@alum.mit.edu>
+2001-12-08
+
+ Experimental fine grain profiling using Pentium cycle counter.
+ Be aware that:
+   - it counts real time, not process virtual time
+   - it tries to measure the processor clock speed each time, so may
+     get different scale factors each time
+   - it will exit if it can't allocate memory
+   - it's barely tested
+
+To use:
+
+First, "make install".
+
+Then, compile some or all of the files of your program with the added
+flag "-finstrument-functions".  Don't use the traditional profiling
+flags (such as "-pg" or "-p").
+
+Add "-lhrprof" to the link line.
+
+When your program exits normally, it will write the file gmon.out, which
+can be interpreted by the standard "gprof" program.
+
+If you forget to give -lhrprof, your program will still link and run, but
+it will not produce gmon.out, and it will be slowed down a little.
+
+Type "make test" for an example.
+
+If you try this out, please send mail to pace@alum.mit.edu with your
+experiences and suggestions.

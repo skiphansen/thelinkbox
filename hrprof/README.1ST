@@ -1,0 +1,12 @@
+hrprof is a fine grain profiling library using Pentium cycle counter.
+
+The files in this subdirectory were modified to eliminate dependency on
+X86 assembly header files that may not be available on all systems.  
+Additionally I modified the code to calculate a profiling rate that prevents
+timer overflows in the function that consumes the maximum amount of time.
+
+Before using this code in other projects I would suggest that you visit the 
+original author's web site at:
+
+http://sourceforge.net/projects/hrprof
+

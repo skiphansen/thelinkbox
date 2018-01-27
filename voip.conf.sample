@@ -1,0 +1,117 @@
+; $Id: voip.conf.sample,v 1.5 2009/09/15 17:04:13 wb6ymh Exp $
+;
+; This file shows all configuration variables that apply to Voip pseudo ports 
+; for reference.
+; 
+; When a VoIP node connects to thelinkbox tlb first looks for a node specific 
+; configuration file <callsign>.conf and then the generic configuration file 
+; voip.conf.  If either of these files are found they are used to configure 
+; the new VoIP node.
+###############################################################################
+
+; The following variable selects the method thelinkbox will use to decode
+; DTMF tones:
+; 0 - none
+; 1 - WB2REM / VA3TO style serial EchoLink interface boards
+; 2 - IRLP parallel port interface
+; 3 - Software based DTMF decoder
+; 4 - Event based DTMF decoding from USB HID device (See DTMF_x_KeyCode)
+; 5 - Asterisk DTMF tunnelling protocol (Voip ports only) 
+DtmfMethod = 3
+
+; Transmitter timeout timer in seconds.  Set to zero to disable timeouts
+TxTimeout = 0
+
+; id of the ToneSpec of tone to play on transmitter timeout
+;TxTimeoutTone = 101
+
+; Receiver timeout timer in seconds.  Set to zero to disable timeouts.
+RxTimeout = 0
+
+; id of the ToneSpec of tone to play on receiver timeout
+;RxTimeoutTone = 101
+
+; When CtoneResetsTimeout = 0 the transmitter timeout timer is reset when 
+; the transmitter unkeys. By setting CtoneResetsTimeout = 1 the timeout timer 
+; is reset when the courtesy tone is played.  
+; Typically this is used on a repeater to discourage long winded transmissions 
+; without requiring user to wait for the hangtime to expire.
+CtoneResetsTimeout = 0;
+
+###############################################################################
+; The following variable controls if a particular VoIP connection is connected
+; to the packet level conference or not.  By default all VoIP connections
+; RUNNING THE SAME CODEC are conferenced together by the conferencing code
+; when ConfEnable is set to 1.  Individual VoIP connections may be removed
+; from the conference by setting its InConf variable to zero.
+;InConf = 1
+
+###############################################################################
+; The following variable is used to execute commands when an VoIP connection
+; is established. Unlike most configuration variables there can be more than 
+; one ConnectCmd variable in the configuration file, each one simply 
+; executes another command.
+;ConnectCmd = script voip_connect.sh
+
+###############################################################################
+; DTMF variables that apply to all DTMF methods
+
+; Filename of file that defines commands for this RF port.
+; note: this is a port variable each ports can have different command sets.
+DTMFCommandFile = voip.cmds
+
+; Maximum amount of time between DTMF digits in milliseconds.  Commands
+; are decoded at the end of a transmission or when there is a pause of
+; more than DTMFCommandTimeout milliseconds between digits.
+; DTMFCommandTimeout = 1000
+
+; Set the following variable to stop DTMF transmissions to this port's 
+; transmitter.  This is typically set for repeater and remote base ports and 
+; unset for link ports.
+MuteDTMF = 1
+
+###############################################################################
+; Software DTMF decoder tuning parameters for DtmfMethod 3.
+; If your touchtone pad has more twist than allowed by the the Bellcore 
+; specification decoded touchtones will be ignored.  The following variables 
+; allow you to lower the limits if necessary.  NB: increasing the acceptable 
+; twist will probably make the touchtone decoder more succeptable to voice 
+; falsing.  Change only if your touchtone encode pad does not work with the 
+; default values.
+; Accepted twists, in dB.  twist = low tone louder than high tone,
+; reverse twist high tone louder than low tone.
+;
+;Twist = 15
+;ReverseTwist = 15
+
+###############################################################################
+; Courtesy tone variables
+
+; id of the ToneSpec for the courtesy tone sound.
+;Ctone = 102
+
+; Map of ports to send the courtesy to when this ports receiver loses
+; signal.  For example if this port is the main input of a remote base
+; system you may want the courtesy sent to the remote's main output but you
+; almost certainly do not want the courtesy tones to be sent to 2 meter 
+; remote base.
+;
+; Conversely you may want a courtesy tone to be generated on the main output
+; by the 2 meter receiver, but it would be a poor idea for the 2 meter
+; receiver to send a courtesy tone out on 2 meters.
+;CtoneMap = 2meters,70cm
+
+; Delay in milliseconds from signal loss to courtesy tone.  If a new signal 
+; is received before the delay expires the courtesy will not be generated.
+;CtoneDelay = 250
+
+###############################################################################
+; The following parameters are used for repeaters using tone burst to control
+; access (typical in Europe)
+
+; Set the following to simulate the reception of a toneburst on this
+; port's *receiver*. This variable will typically be set on link ports and 
+; VoIP ports to allow them to key a transmitter that normally requires a 
+; tone burst.
+;FakeToneBurst = 1
+

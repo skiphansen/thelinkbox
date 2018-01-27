@@ -1,0 +1,11 @@
+#!/bin/sh
+#
+# description: install thelinkbox startup scripts on FreeBSD
+# $Id: install,v 1.1.1.1 2007/04/07 23:55:39 wb6ymh Exp $
+
+set -x
+cd ..
+make install
+cd FreeBSD
+cp tlb.sh /usr/local/etc/rc.d
+

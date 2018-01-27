@@ -1,0 +1,1601 @@
+#####################################
+Changes in version 0.53 12/9/2012
+
+Minor enhancement:
+1. Added new option '5' for LogFileRolloverType for monthly logs.
+
+#####################################
+Changes in version 0.52 11/29/2012 (Limited Beta)
+
+Minor enhancements:
+1. Added new USB device ID for URI (CM108AH) courtesy of Roy K6MF.
+
+Bug Fixes:
+1. Corrected bug in LoadFile which caused odd crashes and general bad behavior
+   when the configuration variables HelpFile or InfoFile where used.
+   
+2. Corrected attempt to use parallel port to unkey transmitter after
+   open failed.
+
+3. Corrected a bug in the APRS-IS code that caused tlb to loop using 100% 
+   of the CPU time when the APRS-IS server communications timed out.
+   Thanks to Rob VK5TRM for reporting and help debugging this problem.
+
+4. Corrected several memset() calls where the value (0) and the length
+   were swapped.  These errors were caught by newer versions of GCC and
+   were apparently benign.
+
+5. Corrected a bug which caused "conferences" created by the Rtp_port
+   configuration file variable to be deleted when the last user logs
+   out.
+   
+#####################################
+Changes in version 0.51 12/19/2011 (Limited Beta)
+
+Minor enhancements:
+1. Added ConfCmdEnable configuration variable to allow commands sent in 
+   EchoLink text packets to be controlled separately from UDP audio and text
+   "conferencing".  Previously commands were disabled when ConfEnable was 
+   set to zero.  This is primarily of use with "Transcoding" conferences 
+   (reflectors).
+
+#####################################
+Changes in version 0.50 12/13/2011 (Limited Beta)
+
+Bug Fixes:
+1. Corrected a segfault which occurred when bind failed (Bind2IP, SFBind2IP, 
+   or RTPBind2IP configuration variables set).
+   
+
+#####################################
+Changes in version 0.49 12/10/2011 (Limited Beta)
+
+Minor enhancements:
+1. Added ConfTextEnable configuration variable to allow UDP packet forwarding
+   of audio packets and text "chat" packets (EchoLink) to be controlled 
+   separately.  This is primarily of use with "Transcoding" conferences 
+   (reflectors).
+
+#####################################
+Changes in version 0.48 11/7/2011 (Limited Beta)
+
+Minor enhancements:
+1. Added -q command line switch to the .users command to allow suppression
+   of logging of the command.  Useful for CGI scripts that poll constantly
+   using the .users command to update realtime web pages.
+
+Bug Fixes:
+1. Corrected a bug which prevented audio from being sent to the DTMF decoder
+   from VoIP ports when no physical ports are configured.
+   
+Misc changes:
+1. Removed deprecated support for the chan_rtpdir interface to Asterisk which
+   has been replaced with G.726.
+   
+
+#####################################
+Changes in version 0.47 11/17/2010 (Limited Beta)
+
+New features:
+1. Added ability to create an RTP conference separate from the speak freely/RTP
+conference previously provided.  This allows you to create connections from
+any pair of ports, not just the ports specified by SF_Port and SF_ReplyPort.
+This potentially allows multiple nodes to share the same IP address under
+certain circumstances.  See the new RTP_Port and RTPBind2IP configuration 
+variables for more information.
+
+2. Added support for the G.726 codec.  The G.726 codec can be used with RTP
+connections only. The G.726 codec is selected by using the -7 switch with
+the .connect command.  This is the prefered codec for use between tlb nodes
+and AllStar nodes.  Thanks to the assistance of Jim WB6NIL in designing and
+debugging support for this codec.
+
+Minor enhancements:
+1. Added COS and PTT support for an PCF8754 i2c port expander chip connected
+to an iMic.  The PCF8754 is available in a 16 pin DIP package which is
+DIY friendly.  Additionally the i2c bus of the iMic is connected to a
+8 pin SOIC EEPROM which has HUGE pins in comparison to the iMic itself.
+Software replaces soldering skills, news at 11:00.
+
+2. Added new command .txpower to set transmitter power.  Currently only
+supported by the Doug Hall protocol.
+
+3. Added default support for the CTCSS input on the URI courtesy of Jim WB6NIL.
+
+4. Changed the amount of audio sent in an uLaw packet in RTP mode to 320 
+samples (40 milliseconds).
+   
+Bug Fixes:
+1. Added code to initialize DTR and RTS to low when opening the serial port.
+The rig blaster uses *BOTH* RTS and DTR to key the transmitter. Since tlb only 
+drives *ONE* handshaking line we need to make sure that the "unused" output 
+doesn't cause the transmitter to be stuck on.
+
+2. Corrected a bug in the PTT logic which occurred when a single sound card
+was used to drive two radios.  The radios were able to key up independently,
+but could only unkey together.
+
+3. Corrected a bug which disabled the command port (tlbcmd interface) when
+EchoLink isn't enabled (EchoLinkEnable = 0).
+
+
+#####################################
+Changes in version 0.46 March 13, 2010
+
+Bug Fixes:
+1. Corrected a bug that caused the user count to get out of synch when an
+rtcp timeout occurred on a permanent connection.
+
+2. Corrected compile error on 64 bit systems.
+
+3. Corrected a bug which caused a timeout by a conference user to be logged
+multiple times (once per packet).  Added a log entry when the long winded
+operator finally unkeys.
+
+4. Corrected segfault that occurred when a TxKeyMethod or RxCosMethod for
+a serial port was specified, but DevName wasn't set.
+
+5. Removed "already connected to xxx" announcement before "Reconnecting xxx"
+announcement when connecting to a node that has recently been disconnected.
+
+6. Corrected a bug in the .say command that prevented it from working with
+some TTS programs that require a linefeed on the end the line (flite).
+
+7. Corrected a bug that caused the user count to get out of synch when an
+a node was disconnected and then reconnected quickly.
+
+8. Corrected several typos in the Doug Hall protocol that prevented frequencies
+   on the 1200 Mhz band from being recognized correctly.
+   
+9. Corrected a bug which prevented a DTMF 'C' from being recognized when an
+   IRLP interface board was is used.
+
+Minor enhancements:
+1. Removed announcement of IP address when connecting to a new station when
+LogIPAddresses is enabled.  LogIPAddresses should only effect the log,
+not over the air announcements!
+
+2. Added code to attempt select a 48 Khz sampling rate when setting 8 Khz 
+fails. Previously only CM108 based USB audio dongles were supported at 48 Khz.
+
+3. Added a new configuration variable PCMRate to allow the default of sampling
+rate of 8 Khz to be changed to 48 Khz for boards that support 8 kHz.  Note:
+This enables the internal 48 Khz <-> 8 Khz sampling rate conversion routines.
+Naturally this requires more CPU resources than running at 8 Khz, but may
+be useful to mitigate poor frequency response of some sound boards when a 
+8 Khz sampling rate is selected.  NB: stereo mode is only supported at a 8Khz 
+sampling rate currently.
+
+4. Added support for the hrprof profiling library.  The hprof library uses
+the Pentium performance counter for profiling and outputs grpof compatible
+files.  When thelinkbox is running properly it spends most of its time
+sleeping a select() call, this renders the profiling support built into
+gcc useless.  Profiling is primarily of interest to developers and for
+debugging.  Profiling is enabled by adding "--enable-profiling" to the
+command line when running configure.
+
+5. Added support for CM109 and CM119 based audio dongles that identify
+themselves with idVendor/idProduct of 0d8c:000e.  These chips are compatible
+enough with CM108 based devices for our purposes.
+
+6. Added support for the CM108AH found in newer URI dongles.
+
+7. Cleaned up announcements generated by the connect command.  The node's
+callsign is now announced rather than it's node number or IP address.
+
+8. Added an example script, scripts/saytime.sh, that announces the time of day.  
+
+#####################################
+Changes in version 0.45 Oct 2, 2009
+
+Bug Fixes:
+1. Changed "Total" column label to "Ave" on the .rxlevel command.
+2. Modified the .rxlevel command to reset the minimum value to 32767 and the
+   maximum value to -32768 rather than clearing them.  This is necessary
+   to correctly detect a DC bias.
+3. Removed code added in 0.44 that sent "Bye" packets to stations which were
+   in the disconnecting state when anything is received from them.  IRLP
+   reflectors reflect the user's "Bye" packet which caused an infinite
+   bandwith consuming loop.  Extra "Bye" packets are now only sent in reply 
+   to valid RTCP packets.
+4. Added code to force the compression type for Echolink clients to GSM.
+5. Removed code that set LastHeard for RTP packets, LastHeard should only
+   be set for RTCP packets.  Ensures we can disconnect from nodes sending
+   an constant audio stream.
+
+#####################################
+Changes in version 0.44 Sept 15, 2009
+
+Minor enhancements:
+
+1. Added -T switch to the users command to display the user list sorted by
+   the time since the user's last transmission.  The user who has transmitted
+   most recently will be at the top of the list.  Normally the list is sorted
+   by the connect time with the station that's been connected the longest at
+   the top of the list.
+   
+2. Added -s switch to the users command to display the user list in the format 
+   that it is shown on EchoLink user's screens when they are connected to
+   the node.  This format show's the user's name or in the case of a 
+   conference the station that's currently talking.
+   
+3. Added new port configuration variable DefaultToneLevel to set the default
+   tone level used for tonespecs that do not set a tone level explicitly.
+   
+4. Added DTMF command to connect to a newsline server to the example tlb
+   command file.
+   
+5. Added a new VoIP port configuration variable ConnectCmd which may be used
+   to specify tlb commands to be executed when a VoIP connection is 
+   established.
+   
+6. Added a new VoIP port configuration variable InConf which may be used
+   to add or remove a specific VoIP connection from the packet level conference.
+   Previously the only way to isolate VoIP connections from each other was
+   to disable conferencing globally by setting ConfEnable to zero.  This
+   caused a lot of confusion for "normal" operations.  The .user command
+   now displays an the 'I' user attribute for stations that have been Isolated
+   from the conference.
+   
+7. Added a new command .rxlevel to display received audio level statistics 
+   from physical ports or VoIP connections.  This command displays the 
+   value of the minimum and maximum samples, the running total, the
+   RMS level and the number of samples that were monitored.  The values
+   are cleared after each .rxlevel command and then new values are accumulated
+   for about one second.  The -c switch enables a continuous display of levels 
+   several times a second until another .rxlevel command is entered.
+   The -q switch suppresses the column header line.  For example:
+     tlb> .rxlevel
+     Min     Max     Total   RMS     Samples
+     -8230   7167    -46     4256    512
+
+8. Modified connection and disconnection logic to suppress announcements for
+   IRLP stations unless the new configuration file variable IRLPAnnouncements
+   is set to 1.
+   
+9. Quieted QueueEvent logging, it now logs if more than one event is 
+   outstanding.
+   
+10. Added a -x switch to the .mute and .unmute commands to mute user text.
+
+   
+Bug Fixes:
+1. Cleaned up uninitialized variables found by Valgrind.  Most were benign, 
+   but caused Valgrind to quit logging errors before reporting more 
+   interesting issues.
+
+2. Modified VoIP port code to disable connect announcements by default. Added
+   support for ConnectAnnouncements to Voip configuration variables.
+   
+3. Added initialization of the ID # to the generator code.  Found by Valgrind,
+   this could have caused unnumbered tone generators to fail to run if more 
+   than one tone generator was active.
+   
+4. Corrected a buffer overwrite bug which occurred when a sound device was
+   configured to support two separate ports in stereo mode.
+
+5. Modified sampling rate conversion (cm108) and CTCSS high pass filter's 
+   scaling to prevent math overflow with high input levels.
+   
+6. Corrected bug in transmitter timeout routine that prevented it from being
+   reset when the offending input was removed.
+   
+7. Corrected a bug that caused the transmitter to be unkeyed 80 milliseconds
+   prematurely under certain unusual timing circumstances (listening to the
+   newsline server).  CM108 based interfaces were not effected by this bug.
+   
+8. Modified the way the connection node count is handled so connections that
+   nodes that are in the process of connecting or disconnecting are not 
+   included in the total.
+   
+9. Corrected a bug in the parallel port logic that clobbered bits set by
+   external scripts when the parallel port is shared (ShareIRLP_Port set).
+   
+10. Cleaned up DTMF muting logic to prevent a courtesy tone from being sent
+    at the end of every command sequence.
+    
+11. Added code to process any waiting DTMF commands when a VoIP ports
+    pseudo COS drops.  Speeds up the processing of commands by avoiding
+    the need to wait for the DTMF timeout.
+
+12. Corrected bugs in DTMF digit timing measurement.  Holding buttons for
+    an extended period on longer result in DTMF timeouts.
+    
+13. Modified code to send "Bye" packets to stations which are in the 
+    disconnecting state when anything is received from them.  This is to
+    cover the case where the initial "Bye" packet is lost.
+    
+14. Modified conferencing code to prevent doubling warning message from being
+    sent to full duplex stations.
+
+####################################
+Changes in version 0.43 July 3, 2009
+
+New features:
+1. Added support for three levels of audio priority to control how audio is
+   mixed when multiple sources are active. Low priority sources are muted when 
+   higher priority sources are active. Medium priority sources are mixed at a 
+   reduced level when high priority sources are active. High priority sources 
+   are always mixed at full level.  Automatic gain control is applied to the 
+   final mix to ensure it does not exceed a 16 bit value.
+   
+   The new port configuration variable AudioPriority sets the port's audio 
+   priority.  It is set to high by default.  The new configuration variable 
+   ReducedGain sets the gain used to mix medium priority sources with high 
+   priority sources, 100 is 100%.  The default value is 25.
+   
+   The new port configuration variable AnnouncementPriority sets the audio 
+   priority of voice announcements (PCM or text to speech).  The announcement
+   source's priority is only used to control the mixing of announcement audio,
+   it is not considered when mixing user audio.  In other words audio from a
+   low priority port will not be muted by a high priority announcement.
+   
+   The tone generator's output is not affected by audio priorities.
+   
+Minor enhancements:
+1. Added a new port configuration variable NoAudioInLooping to prevent the
+   audio input routine from looping until no more audio is available from
+   the input device.  This is a workaround for an apparent driver bug for
+   the Via sound device driver used on the "Little Blue" platform which
+   returns invalid audio samples on back to back reads.  If you have
+   clicking in your transmit audio try setting this variable to 1.  If it
+   corrects the problem and you're not using a Via sound board please
+   let me know.
+   
+2. Modified the .saystatus command to announce stations which are being 
+   disconnected as well as stations that are in the process of being 
+   connected.
+   
+3. Modified the configuration file parser to keep continue parsing the file
+   following an error.  Prevents lots of confusion that resulted when an 
+   error on one variable caused the configuration pass to abort.  
+   Note: Errors on pass 1 configuration variables prevent tlb from running 
+   but tlb will continue to run if errors are found on succeeding passes.
+   
+4. Added a -v command line switch to the .link command to show the audio
+   priorities of sources when the link state is displayed.
+   
+5. Added a -P <priority> command line switch to the .link command to allow
+   the source node's default audio priority to be overridden for the specified
+   link.
+   
+6. VA3JSS added support for keying radio via a different output for the 
+   morse/voice ID. This should allow for keying the radio without CTCSS or 
+   DCS for use on repeaters etc with radios that support it.  Can be enabled 
+   by setting IdAuxPTT to 1 on a per-port basis and setting the Aux_PTT_Bit 
+   and  InvertAuxPTT accordingly. This is currently only available for 
+   parallel interfaces.
+   
+7. Added new port configuration variable NoHangtimeOnID to prevent IDs
+   (voice and CW) from starting the transmitter hang timer.
+   
+8. Added a new configuration variable TempDir which specifies where 
+   temporary files are to be created.  Currently temporary files are used 
+   to update the DNS cache and when tlb is configured to use a text to speech
+   system.  If TempDir is not set the WorkingDir will be used for temporary
+   files.
+
+Bug Fixes:
+1. Added audio buffering to the software CTCSS decoder. The CTCSS decoder
+   was designed to process 160 samples at a time, but it has been given 
+   whatever happened to be read from the audio device since version 0.39.
+   This means that since version 0.39 software detection of CTCSS only worked
+   when the audio device happened to return 160 or more samples at a time.
+   Notably an URI on a Little Blue does not.
+
+2. Restored the TxTone configuration port variable.
+
+3. Moved the processing of the RxTone port configuration variable to pass 2
+   so it works correctly if it's defined before RxCtcssMethod.
+   
+4. Restored support for the CWSpeed port configuration parameter which was
+   lost when the original CW ID code was replaced with tone generator based
+   code in version 0.40.
+   
+5. Corrected another bug in the CM108 sampling rate conversion code that
+   caused noise to be generated on the input.  For some reason the noise was 
+   most noticeable when the input signal used CTCSS.
+
+6. Modified the .link command to handle a .link -m <port1> <port2> command
+   following a .link <port1> <port2> command.  Previously the ports where
+   left linked in transceive mode rather than being set to monitor mode.
+
+7. Corrected a minor memory leak that occurred when a specific link was 
+   unlinked (.unlink <port1> <port2>).
+   
+8. Corrected the PID logged at startup, previously it was always zero.
+
+9. Massive changes to the toneburst code.  A timing related bug that caused
+   the ToneBurstTimeoutTimer to be restarted over and over has been fixed.
+   Additionally the tone burst logic now applies to all transmitters, not 
+   just the port's transmitter.  Finally the poorly thought out FakeToneBurst 
+   port configuration variable was eliminated. 
+   
+   The port's receiver is now enabled when:
+     1. A tone burst is received.
+     2. The ToneBurstMode is 2 and the proper CTCSS tone is decoded.
+     3. The port's transmitter has transmitted something other than an ID 
+        within the last ToneBurstTimeout seconds.
+
+####################################
+Changes in version 0.42 May 28, 2009
+
+Bug Fixes:
+1. Set new user's CompressType from conference's CompressType rather than
+   assuming GSM.  Corrects playing of .WAV format welcome messages to non-GSM
+   clients.
+   
+2. Added new port configuration variable CosPollRate to provide the ability to 
+   reduce the polling rate if desired.  Fixes badly broken audio when 
+   an CM108 based interface is used on a "Little Blue" platform 
+   (677 Mhz Via CPU and USB 1.1 ports).
+   
+3. Modified VoipClock to reset timing average every 10 minutes to prevent
+   math overflows that occurred after running for a few weeks (24.855 days
+   to be precise).
+   
+4. Corrected a buffer overflow bug in the sampling rate conversion code that
+   caused clicks in audio when CM108 was used on a Little Blue platform.
+   
+5. Added a CTCSS high pass filter in front of the software DTMF decoder.  This
+   improves DTMF operation when the user is running CTCSS and the sound card
+   input is connected to an FM receiver before CTCSS filtering.
+
+6. Moved DTMF the software decoder's input to after the RxDeemphasis filter.
+   This improves DTMF operation by removing twist caused by FM transmitters 
+   preemphasis when the audio card input is hooked into an FM receiver before
+   the receives deemphasis circuitry.
+   
+7. Modified file playback code to clear ssrc only when absolutely necessary.
+   Corrects file playback to tlb clients under certain unusual timing
+   situations.
+
+####################################
+Changes in version 0.41 April 4, 2009
+
+Minor enhancements:
+1. Modified callsign validation routine to allow bare callsigns when tlb is
+   not being used on the EchoLink network.
+   
+2. Setting up a permanent link between nodes now sets any underlying VoIP 
+   connections to permanent connections.
+   
+3. The permanent attribute can now be set on existing links.
+
+4. Added code contributed by Jason VA3VSS to log the station's IP address as 
+   well as callsign on connects and disconnects when the new configuration 
+   variable LogIPAddresses is set.
+   
+5. Added configuration switch --enable-profiling to build thelinkbox with 
+   gprof profiling to aid development and debugging.
+   
+6. Added multiple parallel ports support contributed by Jason VA3VSS.  The
+   new port configuration variable DevName specifies the parallel device used
+   by the port.
+   
+7. Added code to play Welcome file to VoIP connections of all types when a
+   the Welcome file is in a .wav format.  The welcome file support in 
+   thebridge's code requires that the welcome file be in thebridge's internal
+   format and only supports GSM connections.  When an .wav format file is
+   provided thelinkbox's new welcome file support is used instead.  The
+   Welcome file variables WelcomeFile, MinPlayBackPause, and 
+   MaxPlayWithoutPause are now VoIP port variables to allow the global defaults
+   to be overridden if desired.
+   
+8. Added VoIP port configuration variable DisconnectAfterWelcome to cause
+   VoIP connections to be disconnected automatically after the Welcome message
+   is played.
+   
+9. Added code to execute an optional script when a new VoIP connection is 
+   established.  The new VoIP port configuration variable ConnectScript sets
+   the path to the script.  The script is executed with two arguments, the
+   callsign of the station that connected and the string "connected".
+   
+10. Added code to tlbcmd to set port from the TLB_CMDPORT environment variable 
+    if present.
+   
+11. Added code to tlbcmd's play personality set the maximum wait time for 
+    the playback to complete  from the TLB_MAX_PLAY environment variable if 
+    present.  The default timeout is 30 seconds.
+    
+12. Added -v switch to the .users command to display the version and type
+    of software the user is running when that information is available.
+
+
+Bug Fixes:
+1. Turned off debug level DLOG_RTP that was inadvertently left on in the last
+   release.
+   
+2. Corrected a bug in the serial port sharing code added in version 0.39 that
+   prevented successful initialization of WB2REM / VA3TO style serial 
+   EchoLink interface boards.
+           
+3. Corrected a bug which caused a crash if the VoIP connection underlying a
+   permanent link was disconnected.
+   
+4. Corrected a bug which prevented DTMF from being decoded from a VoIP 
+   connection while multiple streams were active (conferenced connections).
+
+5. Corrected a bug in the saystatus command that caused pending connections to 
+   be announced as connected.  The saystatus command will now say:
+   "I am currently connected to <station list>" and
+   "I am trying to connect to <station list>" separately.
+   
+6. Corrected a crash which occurred when a permanent connection was 
+   reestablished following a timeout.
+   
+7. Corrected a bug that prevented tlb from changing user identities when run in 
+   debug mode.
+    
+####################################
+Changes in version 0.40, Feb 14 2009
+
+Bug Fixes:
+1.  Corrected a long standing bug in the RTP queue handler which caused 
+    incoming VoIP audio to stall when duplicate RTP packets were received 
+    back to back.  Thanks to Lee K7KAJ and his WiFi link to his "radio shed"
+    for help fixing this issue.
+
+2.  Corrected cm108 audio output that broken by the stereo support added in
+    the last release.
+    
+3.  Modified the courtesy tone logic to prevent a tone accessed transmitter
+    from being keyed unless it has previously been enabled by a user's
+    access tone. Thanks to Erik (and Skype!) for help in debugging this
+    problem.
+    
+####################################
+Changes in version 0.39, Feb 14 2009
+
+New features:
+1. Thelinkbox can now support two radios using a single stereo capable sound 
+   device.  Thelinkbox also allows multiple ports to share a single serial 
+   or parallel port.  This means that the typical PC can act as a two port 
+   controller without additional sound devices.  The new port configuration 
+   variable AudioChannel specifies which channel a port audio is connected to.  
+   The existing port configuration variables TxKeyMethod, RxCosMethod, 
+   DtmfMethod, PTT_Bit, and COS_Bit are used to specify which serial or 
+   parallel port bits drive PTT and which bits are COS inputs.
+   
+2. The linkbox now supports tone burst access repeater control that is 
+   typically used in Europe.  See the new port configuration variables 
+   ToneBurstMode, ToneBurstFreq, ToneBurstMute, ToneBurstTimeout, 
+   ToneBurstToneID and FakeToneBurst for more information.
+
+Minor enhancements:
+1. Massive restructuring of the audio buffering algorithm to minimize port to 
+   port audio delays.  Previously audio was handled as 80 millisecond chunks 
+   resulting in a 160 millisecond port to port delay.  Now audio is treated 
+   like a stream to minimize the delay.
+    
+2. Added -a command line option to the .sendbeacon command to force an update
+   to be sent to the APRS-IS system.
+
+3. Added .wav format "welcome" file support.  Wave format welcome files can be 
+   played for any VoIP client.  The legacy welcome file support inherited 
+   from thebridge only supports EchoLink clients.  See the configuration 
+   variable WelcomeFile for more information.
+   
+4. Added -p command line option to the .link command to mark a port link
+   as "permanent".  Permanent links are ignored by the .unlink all, .unlink rf, 
+   .unlink voip, and .unlink <port> commands.  The link can only be removed 
+   by an explicit .unlink command that specifies both ports.
+
+5. Added a new port configuration variable RepeaterPort to cause a permanent 
+   link to be created automatically from a port's receiver to its transmitter 
+   at initialization time.
+    
+6. Removed untested support for 8 bit sound cards.  Sorry about that, I don't
+   have any cards to test with and no beta testers have come forward.
+   
+7. Added "dtmf" to the port status string when an DTMF digit is being decoded.
+
+8. Added port status string support for VoIP nodes (lightly tested).
+
+9. Added support for the MaxPlayWithoutPause and MinPlayBackPause configuration 
+   variables to the FILE playback "tone" generator.
+    
+Bug Fixes:
+1. Corrected an unnoticed long standing bug in the Doug Hall support caught by
+   gcc 4.3.2's anal warnings.
+
+2. Corrected uLaw/RTP bugs.  Previously uLaw only worked correctly over the
+   Speak Freely protocol.
+   
+3. Corrected a crash which occurred when thelinkbox was unable to open the 
+   sound device.
+
+4. Corrected operation of COS & CTCSS inputs via the parallel port.  Thanks to
+   Erik oh2lak for reporting the problem and testing the fix.
+   
+5. Corrected formating of APRS-IS packets when configured for certain locations 
+   (longitude less that 100 degrees for one). Thanks to Erik oh2lak for 
+   reporting the problem and testing the fix.
+   
+6. Corrected crash when APRS-IS is enabled and the ConferenceCall was longer
+   than 9 characters.  It is not possible to use APRS-IS with such "calls"
+   since the APRS-IS object name is a fixed size, but thelinkbox will now
+   report the error instead of crashing.
+   
+7. Corrected a crash that occurred when attempting to execute a DTMF command 
+   when EchoLink wasn't enabled (EchoLinkEnable = 0).  Thanks to Erik oh2lak 
+   for reporting the problem.
+
+8. Corrected a crash that occurred when attempting to execute a DTMF command 
+   without a valid current port selection.
+   
+9. Corrected compile problems in the AX25 code under FreeBSD 4.x.
+
+10. Corrected a bug in tlbcmd's imike emulation that could cause the uLaw 
+    CODEC to be selected inadvertently for full duplex connections.
+
+11. Corrected a premature DTMF command timeout when buttons where pressed
+    slowly.  Previously the command timeout was started on button press, now
+    it's started on button release.
+    
+12. Reworked Vox code so it's treated more like a "real" cos.  Added verbose
+    debug logging enabled by setting the DLOG_COS_CTCSS (0x400) bit in the
+    debug variable.
+
+####################################
+Changes in version 0.38, Jan 3 2009
+
+Changes which are not backwards compatible:
+1. Inverted the active sense of RS232 based inputs to conform with RS232
+   convention to avoid future confusion.  NOTE: configuration files for 
+   previous versions must be modified by changing the sense of the InvertCOS 
+   and InvertCTCSS variables.  If your configuration file did not have an
+   InvertCOS or InvertCTCSS then add one and set it to one.  The default
+   is non-inverted.
+
+2. Changed the software DTMF method for VoIP ports to 3 to match physical 
+   ports. Method 1 is now undefined for VoIP ports.
+
+New features:
+1. Added 1200 baud AFSK AX25 packet generation support to the tone generator.  
+   This feature may be used to send APRS beacons to advertise the
+   nodes location and CTCSS tone and other information.  The ability to 
+   generate packet is also expected to be useful for sending telemetry. See
+   the "Ax25 specific variables" section in the sample port configuration file
+   for more information.
+   
+2. Added ability to list the node on the APRS-IS (Automatic Packet Reporting 
+   System-Internet Service) system.  See AprsIsEnable in the sample 
+   configuration file for more information.
+   
+Minor enhancements:
+1. Added new example script that plays a rotating set of prerecorded voice 
+   IDs periodically to a port when idle.  See scripts/voiceid.sh for more
+   information.
+
+2. Added new port configuration variable "ConnectAnnouncements" to allow 
+   connect and disconnect announcements to be enabled/disabled on a per port 
+   basis.
+
+3. Added automatic detection of big endian hosts to configure script.
+
+4. Added <port name> to the "dtmfdecode" event.
+
+5. Restored the RxTone configuration file variable.  The receiver's CTCSS tone
+   may now be set by either the configuration file variable or the RxTone
+   command.  The eliminates the need to write an configuration script just
+   to set the RxTone.
+   
+6. Added an CTCSS high pass filter in the transmitters audio path, enabled by 
+   the port configuration variable TxCtcssFilter.  
+   
+7. Added the .pcm command which allows raw PCM data from various points in the 
+   signal path to be saved to disk.  This command is primarily an debug aid.
+   
+8. Added software preemphasis and deemphasis support to properly shape audio
+   when thelinkbox is connected directly to an FM receiver's discriminator or
+   an FM modulator by passing the radios built in preemphasis and deemphasis
+   circuitry.  See the port configuration variables RxDeemphasis and 
+   TxPreemphasis for more information.
+   
+9. Added configure test for the EVIOCGUNIQ ioctl which is not available in 2.4 
+   kernels and added #ifdefs as needed to get thelinkbox to build. EVIOCGUNIQ 
+   is only needed for USB device serial number support so it's not essential. 
+   It is still an open question if thelinkbox will actually run correctly on 
+   2.4 kernels or not.
+   
+Minor changes:
+1. The APRS/AVRS configuration variables TxPower, Haat, AntGain, AntDir,
+   and Frequency are now port specific.  This provides the ability to beacon
+   different information on different ports for multiband repeaters.  
+   
+2. Replaced the poorly conceived VoipOutMap and VoipInMap configuration file
+   variables with LinkVoipIn and LinkVoipOut port configuration variables.
+
+Bug Fixes:
+1. Corrected Redhat startup script installation.  tlb.sh should have been
+   named tlb.  Also added chkconfig info courtesy of John K1DWU.
+
+2. Corrected a major memory leak introduced in 0.84.  Several kilobytes of 
+   memory are lost everytime the user database is updated (by default every 
+   10 minutes).  Over time this adds up to a significant amount of memory.
+   
+3. Corrected bogus read failures reported by GetAudioIn with some sound
+   card drivers.  Thanks to KB7RSI for his help debugging this problem.
+   
+4. Corrected bug in CText class which prevented initial buffer size from 
+   being increased.
+   
+5. Corrected a bug which causes an infinite loop on startup when compiled with
+   some compilers (gcc 3.3.4 for the ARM) that have where the default char type 
+   is unsigned.
+
+6. Corrected bug that broke PCM file based callsign spelling.  Thanks to
+   WB5TTS for reporting and help debugging the problem.
+
+####################################
+Changes in version 0.37, July 28 2008: (beta release)
+
+Minor enhancements:
+1. Update Asterisk support for chan_rtpdir version 0.5 which added sequence
+   numbers and DTMF support. NB: chan_rptdir version 0.2 is no longer 
+   supported.  DTMF received from Asterisk is handled like DTMF received
+   by any other node, commands are decoded by its possibly unique 
+   DTMFCommandTable.
+
+2. Added -b, -c and -t arguments to the .users command.  The -b switch
+   suppresses the display of the user's attributes and uses a tab to
+   separate fields.  The -c switch displays the amount of time each user 
+   has been connected.  The -t switch displays the time since the user 
+   last transmitted.
+
+Bug Fixes:
+1. Corrected a bug that caused an assert failure (and core dump) when 
+   unlinking from an active source when multiple sinks were linked.
+
+2. Corrected bug that caused an assert failure (and core dump) when a new 
+   sink was linked to an active source.
+
+3. Corrected a bug that corrupted audio when driving multiple sinks.
+
+4. Corrected a bug that caused audio corruption on protocols/codecs which 
+   carried other than 640 audio samples per packet. (Basically everything 
+   other than Asterisk and EchoLink). Thanks to beta tester extraordinaire 
+   VK3JED for finding this bug and help testing the fix.
+
+5. Corrected a bug that caused the courtesy tone to be sent at the wrong time
+   when a source was connected to multiple sinks.
+
+####################################
+Changes in version 0.36, July 23 2008: (beta release)
+
+New features:
+1. Added support for full duplex via conference rooms. The conference must
+   be thebridge version 1.04 or later or thelinkbox version 0.36 or later and
+   the FullDuplex configuration file variable must be set.
+
+Minor enhancements:
+1. Added support for uLaw (uncompressed) codec for rtp and Speak Freely 
+   connections.  Added -u switch to the .connect command to specify uLaw
+   connection.
+
+2. Corrected Internet dejitter buffer operation for the Speak freely protocol.
+
+3. Added full duplex (-x) and uLaw (-n) support to the iMike emulation.
+
+####################################
+Changes in version 0.35, July 21 2008: (Limited beta release)
+
+New features:
+1. Added support for Asterisk's new chan_rtpdir driver. See the configuration 
+   variables AsteriskPort, AsteriskIP, AsteriskBind2IP and AsteriskDesc in
+   tbd.conf.sample for more information.  NB: This code is for people who are 
+   knowledgeable about Asterisk and the app_rpt project. I needed a *lot* of 
+   help from W9SH and K6JWN to get my Asterisk node running, so I won't be 
+   offering any help for configuring Asterisk to use the new chan driver.
+
+Minor enhancements:
+1. Added code to enable the stock EchoLink clients DTMF pad when the 
+   configuration file variable EnableRemoteDTMF is set to 1.
+   
+2. Added an emulation profile for dtmfregen to tlbcmd.
+
+3. Added <callsign>_fd.conf, "port####.conf" and port####_fd.conf to the list 
+   of configuration files which are searched for configuration information 
+   when a new VoIP client connects.  "####" is the port number of the audio 
+   port (even port number) that the client connected to.  For example the 
+   configuration file used for connections to the EchoLink port is 
+   port5198.conf.  When a new VoIP clients connects thelinkbox first looks for 
+   <callsign>.conf, then port####.conf and finally voip.conf.  If the client
+   is full duplex the search order is <callsign>_fd.conf, <callsign>.conf,
+   port####_fd.conf, port####.conf and then finally voip.conf. The first 
+   configruation file that is found is processed, the rest are ignored.
+
+4. Added -f switch to the .connect command to specify full duplex connection.
+
+5. Performance optimization: replaced calls to BiQuad function with BIQUAD 
+   macro in filter functions.
+
+Bug Fixes:
+1. Modified code to prevent 5 bytes of garbage from being written to the end 
+   of saved .info files.
+
+2. Modified code to prevent station list received from other conferences from
+   being  saved as info and in .info files.
+   
+3. Corrected an infinite loop that occurred when the tone generator was given
+   a DTMF string followed by a space.
+   
+####################################
+Changes in version 0.34, June 26 2008: (beta release)
+
+Minor enhancements:
+1. Modified tlbcmd/tlbchat to save and restore the history file from the
+   user's home directory rather than the current directory.
+
+2. Modified ExecHook to pass all chat text in the second argument for
+   "chat" and "sent_chat" events.  Previously everything including the
+   event type was passed in the first argument which made life for scripts
+   harder rather than easier.
+
+3. Added code to replace "$TLB_PORT" within command strings with the name of 
+   the port that issued the command.
+
+4. Added a .frequency command that allows the port's receiver frequency,
+   transmitter offset, CTCSS encode and CTCSS decode to all be specified
+   at once.  If no arguments are given the .frequency command will display
+   the current settings if available.
+   
+5. Added new example DTMF command script to set the transmit, receive and 
+   CTCSS frequencies for a 2 meter remote base.  (scripts/freqctrl.sh)
+
+6. Added new example that implements a DTMF regeneration scheme for systems 
+   that use site prefixes.  See scripts/prefix.sh for more information.
+
+7. Modified the DTMF muting logic.  The MuteDTMF port configuration variable
+   now specifies if DTMF tones should be muted before reaching the port's
+   transmitter.  Previously MuteDTMF specified if DTMF tones were muted 
+   before leaving the port's *receiver*.  Typically we want to pass 
+   DTMF tones to link transmitters, but not repeater and remote base 
+   transmitters, changing the binding from the receiver to the transmitter
+   makes this possible.  NB: DTMF mute is only active for receivers on
+   ports configured with an DTMF decoder (DtfmMethod > 0).
+
+8. Modified the .disconnect command to accept "." as a short hand for the
+   station currently talking to match the .mute command.
+   
+9. Added include file support for the DTMF command files.
+
+10. Added -p command line switch to the .tonegen command to send the generated
+    tone to the current nodes peers rather than the port itself.  Peers are
+    other nodes that are currently connected to the current nodes receiver.
+    The option is useful for DTMF regeneration among other things.  An -P
+    command line switch can be used to send generated tones to the current
+    node as well as the node's peers.
+    
+11. Added -c command line option to the .tonegen command to execute the 
+    specified command when the tone completes playback.
+   
+Bug Fixes:
+1. Modified code to record locally generated chat traffic even when the
+   conference is empty.
+
+2. Corrected a bug in the command parser that could cause command output
+   to be logged instead of the user's command.  This bug could also prevent
+   multiple commands on one line from executing properly.
+   
+3. Corrected the name of the environment variable that holds the current
+   port in tlbcmd (TLB_PORT, not TLBPORT).
+   
+4. Corrected .unlink command to fully unlink ports, previously only half of
+   the link was unlinked.
+   
+5. Modified logic to announce VoIP connect and disconnect events to ports
+   listed in the VoipInMap and VoipOutMap configuration variables.  Previously
+   connection and disconnection announcements were sent to the current port.
+
+6. Added decrement of Transmitters to the .unlink all command.  Fixes massive
+   memory leak caused by failure to delete uncompressed audio data after an
+   .unlink all command is used.
+   
+7. Modified Doug Hall protocol handlers to prevent updates from being sent
+   too fast to be recognized.  The Doug Hall protocol uses timeouts to 
+   recognize frame boundaries.
+   
+8. Modified the configure setup to detect the lack of a C or C++ compiler and 
+   exit with an error message rather than trying to press on.
+
+####################################
+Changes in version 0.33, May 14 2008: (beta release)
+
+New features:
+1. Modified the code to allow thelinkbox to be run without a sound card.  
+   Why? To give a conference server a DTMF command line and all of the other
+   capabilities of thelinkbox such as connections between VoIP clients running
+   different codecs, speech synthesizer, etc.
+   
+2. Added support for radio frequency and CTCSS control via the Doug Hall 
+   protocol using data and clock lines attached to either the parallel port or 
+   an USB audio dongle's GPIO lines.  Connections to the parallel port are 
+   untested currently.  The new commands rxfrequency, txoffset, rxtone and
+   txtone are used to set the radio's operating parameters.
+
+Minor enhancements:
+1. Added code to strip trailing spaces from end of string configuration
+   file variables to some difficult to find problems.  Thanks to N4KLB for
+   the suggestion.
+   
+2. Modified text to speech preprocessing code to add text specified by the new 
+   configuration variable CallSignSpelling between letters of a callsign before
+   passing it to the speech synthesizer.  Previously tlb just inserted spaces
+   but it was discovered that some speech synthesizers (Cepstral for example) 
+   pronounce single letter abbreviations when they follow a number.  Thanks
+   to wd5m and n4klb for testing and suggesting solutions to this problem.
+   
+3. Added support for spelling out callsigns phonetically by setting the new 
+   configuration file variable PhoneticFilePath.
+   
+4. Added -s (spell) switch to the .say command to force the argument to be
+   treated as a callsign.  Callsigns are spelled out letter by letter.
+   
+Bug Fixes:
+1. Corrected compile errors in new ctcss code under FreeBSD (u_int8_t).
+
+2. Corrected bug in the tone generator that could cause the transmitter to get
+   stuck on while trying to generate dtmf.
+   
+3. Corrected compiler errors and numerous warnings about deprecated conversion 
+   from string constant to 'char *' when compiling with GCC 4.2.x.
+   
+4. Modified USB PTT routine to use the PTT_Bit and InvertPTT configuration 
+   file variables.  Previously the USB GPIO bits were hardcoded for the 
+   "standard" bits.
+
+####################################
+Changes in version 0.32, April 24 2008: (beta release)
+
+New features:
+1. Added direct support for command prefix decoding. See DTMFPrefix, 
+   PrefixedTone and PrefixTimeout in port.conf.sample for more details.
+   
+2. Software based CTCSS decoding is now supported.  The tone frequency is set
+   by the RxTone port configuration variable.  Setting Rxtone to "search" 
+   causes thelinkbox to attempt to determine a which tone is in use by 
+   monitoring the channel.  RxTone may also be set to "any" which will enable 
+   all possible tones for testing.
+
+Minor enhancements:
+1. Changed DTMFCommandTimeout from a global configuration variable to a port
+   configuration variable so different ports may be configured with different
+   timeouts.
+
+2. Added configuration variable DTMFCommandFile for Voip ports.
+
+3. Began modifications to allow a single stereo sound card to be use to 
+   interface to two separate radios.  NB: modifications are *NOT* complete yet.
+
+Bug Fixes:
+1. Modified the code to use 48khz to talk CM108 based USB dongles.  Added 
+   local sampling rate conversion routines to convert between 8Khz and 48Khz.
+   On some (all ?) versions of the kernel and some (all ?) versions of the 
+   audio subsystem sampling rate conversion between the 8Khz that thelinkbox 
+   uses and the 44.1 or 48 Khz sampling rate the CM108 chip actually supports
+   in hardware results in an unacceptable amount of noise/clicking/buzzing
+   being introduced.  
+   
+2. Added code to set the TLB_PORT environment variable to the port issuing
+   the command send a script is run.
+   
+3. Added numerous checks to make sure the current port still exists before
+   trying to use it.  Now that VoIP connections are treated as the same as
+   other ports it's possible for port to disappear at any time.
+
+####################################
+Changes in version 0.31, April 11 2008: (beta release)
+
+Minor enhancements:
+   
+1. Added DTMF generation support to the tone generator.  
+   For example:
+     tonespec = ID 1000 DUR 100 PAUSE 250 DTMF #123
+   generates 3 DTMF digits that are 100 milliseconds long with 250 milliseconds 
+   between them.  The active tone time is set by the DtmfEncodeDuration 
+   configuration variable if DUR is not specified. The pause between digits 
+   is set by the DtmfEncodePause configuration variable if PAUSE is not 
+   specified. The old .dtmfgen command has been deleted since it's no 
+   longer needed. 
+
+2. Modified syntax of Tonespecs to make parsing more general and order 
+   independent. Tone segments are now terminated with a ':' character.  As a 
+   result the DUR token is no longer special so it can be used to specify the 
+   duration of a DTMF tone without conflict.
+   
+3. Added support for playing wave files to the tone generator.
+
+4. Added code to send an chat event to the event hook when a text chat message
+   is received from a user.
+   
+5. Added code to send an sent_chat event to the event hook when a chat message
+   is sent.
+
+Bug Fixes:
+1. Corrected an infinite loop that occured when attempting to send a courtesy 
+   tone under certain rare timing conditions.
+
+2. Corrected bug that could cause a segfault when an invalid email address
+   is entered for the EmailAdr configuration variable.
+
+####################################
+Changes in version 0.30, Mar 21 2008: (beta release)
+
+Minor enhancements:
+1. Added support for CW generation to the .tonegen command.  For example if
+   you might want to configure a multiple band remote base such that the 
+   courtesy tone for the 2 meter radio is a '2' in CW and the courtesy tone 
+   for the 6 meter radio is a '6'.  That could be accomplished by the following
+   tone specs:  
+     tonespec = ID 1000 tf1 1000 wpm 25 cw "2"
+     tonespec = ID 1001 tf1 1000 wpm 25 cw "6"
+   The port configuration file for the 2 meter ports would set Ctone = 1000
+   and the port configuration file for the 6 meter would set Ctone = 1001.
+
+2. Modified configuration file parser and .set command to handle variable 
+   assignments without spaces around the equals sign.
+
+####################################
+Changes in version 0.29, Mar 12 2008: (limited beta release)
+
+Bug Fixes:
+1. Corrected tracking of the last activity for timing of IDs. Previously 
+   that triggered an ID was playing an announcement file or manually firing
+   it using the .id command.
+
+####################################
+Changes in version 0.28, Mar 12 2008: (limited beta release)
+
+Bug Fixes:
+1. Make a copy of the VoIP client's callsign rather than saving a pointer
+   to it.  Everytime an inbound SDES packet is processed the callsign is
+   updated causing it's address to change.
+   
+####################################
+Changes in version 0.27, Mar 11 2008: (beta release)
+
+Minor enhancement:
+1. Reimplemented support for the CtoneMap configuration variable.
+
+Bug Fixes:
+1. Corrected a bug in GetRxAudio which caused a crash when the CToneTimer was
+   started when only a single buffer was queued for consumption.  This
+   occurs when there's packet loss.
+
+2. Moved include for common.h to after system headers.  Fixes compile
+   problems (min macro) on some systems.
+
+3. Modified the VoIP node's audio stream logic correct a bug that caused one 
+   transmitter to consume a receiver's audio N times when the receiver was 
+   linked to N transmitters.  Fixes echo reflector behavour plus crashes when
+   the next transmitter tried to reference deleted structures.
+   
+
+####################################
+Changes in version 0.26, Mar 9 2008: (beta release)
+
+Minor enhancement:
+1. Added support for the TLBPORT environment variable to imike, ispeaker and
+   play emulation.
+
+Bug Fixes:
+1. Removed the signal handler for SIGTERM and SIGINT for tlbcmd's play 
+   emulation so play can be aborted by SIGTERM.
+   
+2. Reimplemented support for the courtesy tone generation by Voip ports.
+   The configuration file variables VoipCtone, VoipCtoneMap and VoipCtoneDelay
+   are obsolete, they have been are replaced with the port variables Ctone, 
+   CtoneMap and CtoneDelay now that VoIP ports are handled the same as physical
+   ports.
+
+3. Modified port and link commands to hide VoIP ports that are in the 
+   disconnecting state.
+
+4. Corrected spurious complaints from CToneAccessMap about being called with
+   CurrentNode == NULL.
+
+5. Modified the command parser to allow a dot prefix when multiple commands
+   are entered on one line.  Previously ".help;.help" would fail because the
+   '.' wasn't stripped from the second command.
+
+6. Corrected bug in the command parser that caused the first command to be
+   executed multiple times when another command wasn't found or was partially
+   matched.
+   
+####################################
+Changes in version 0.25, Mar 7 2008: (limited beta release)
+
+Minor enhancement:
+1. Added a -c command line switch to the .say command to send a TBD_SAY_COMPLETE 
+   response to tlbcmd/tlbchat when the audio transmission completes.
+
+2. Modified the code to extract callsigns from SDES packets for RTP clients 
+   as well as EchoLink.  Allows nodes to be named by callsign rather than ip 
+   addresses in offgrid networks without hostfile entries.
+
+3. Added support for multiple commands on one line separated by ';'.
+
+Bug Fixes:
+1. Corrected a bug in the file playback code that caused crashes on some 
+   systems when a welcome file was played for SF clients.
+
+2. Reimplemented support for the VoipOutMap configuration variable.
+
+3. Modified CmdInfo to suppress disable of "Currently displaying" unless 
+   ShowStatusInInfo is enabled.
+
+####################################
+Changes in version 0.24, Mar 5 2008: (limited beta release)
+
+New features:
+1. Major restructuring of the internal infrastructure to treat VoIP connections
+   as pseudo ports.  This means that features which previously were only
+   applicable to physical ports such as telemetry tone generation, DTMF
+   command processing, timeout timers, etc now apply to VoIP connections
+   as well.  The interconnect matrix has been redesigned and the "limitation"
+   of 32 ports has been eliminated.  It is now possible to link VoIP 
+   clients together that are running different codecs and protocols.
+
+2. Added support for the TLBPORT environment variable. The .script command now
+   sets the TLBPORT environment variable to the name of the port that executed
+   the script and tlbcmd now uses the variable to prefix commands issued by
+   the script with "port ${TLBPORT};". In many cases this allows scripts to
+   be blissfully ignorant of the port selection and just rely on the man 
+   behind the curtain to do the right thing.  This feature can be disabled
+   by the new -b (bare) tlbcmd command line switch.
+   
+3. Voip connections are now configured dynamically when the connection is
+   established. First tlb looks for a node specific configuration file 
+   <callsign>.conf and then the generic configuration file voip.conf.  If
+   either of these files are found they are used to configure the new
+   VoIP node.
+
+Minor enhancement:
+1. Add display support for DTMFCommandFile to the set command.
+
+2. Added code to log any error messages (such as bad password) received
+   from the EchoLink directory servers.
+
+3. Changed the configure script's default for readline support to disabled
+   to reduce build problems.  To enable readline support run configure with
+   the --with-readline flag.
+
+4. Added new configuration file variable AllowADPCM to enable the Speak Freely
+   and RTP conferences to support clients running the ADPCM codec.  
+   NB: This does *NOT* mean that GSM and ADPCM clients will be able to 
+   communicate by connecting to a common conference.  GSM packets are only 
+   relayed to GSM clients and ADPCM packets are only relayed to ADPCM clients.
+
+5. Added support for the dmalloc memory debugging tool.  Added code to 
+   explicitly release memory on shutdown to help locate actual memory leaks.
+
+6. Added a new configuration variable EchoLinkEnable that can be used to
+   prevent tlb from opening sockets for the Echolink ports.
+
+7. Added code to display a usage message when the .monitor command is run 
+   without arguments.
+
+8. Modified the .users command to display an 'a' user attribute for ADPCM users.
+
+9. Added support to the .play4 -u command for SF and RTP clients.
+
+Bug Fixes:
+1. Modified tlbcmd to disable readline support when used by a script to
+   prevent SetTerminalMode from spewing error messages.
+   
+2. Corrected a bug in SFBind2IP which also broke Bind2IP operation. Thanks
+   to VK3JED for debugging help.
+   
+3. Corrected a bug in tlbcmd that caused a segfault when a ^D was used to exit
+   and it was compiled with readline support.
+
+4. Removed newline from playbackcomplete event.  This was the only event
+   which ended in a newline.  Thanks to WD5M for finding and reporting this.
+   
+5. Modified SF and RTP code to ignore packets with unknown codecs rather
+   than kicking the connection.
+   
+6. Modified the .connect command to default to the port specified by the
+   SF_Port configuration variable rather than 2074 for Speak Freely 
+   and RTP connections to match tbd's behaviour prior to version 0.87.
+   
+7. Corrected incorrect generation of "bye/disconnect" packets for Speak
+   Freely and RTP clients. Previously "bye/disconnect" packets were always
+   generated in EchoLink format.
+   
+8. Corrected a bug in the access control routines which prevented -R or 
+   -L stations from being .allowed to connect via RTP or SF.
+   
+9. Corrected a bug in the access control routines that caused -R or -L 
+   callsign suffixes to be lost for station connected via RTP or SF that 
+   were allowed by IP address.
+   
+10. Corrected a bug in the connect command that prevented a connection to
+    a node by IP address from being reestablished immediately after it had
+    been disconnected.
+
+11. Corrected bugs that prevented the .record command from recording traffic
+    from SF and RTP clients.  NB: only GSM traffic can be recorded.
+   
+12. Modified the code to assume new SF and RTP connections are using the GSM 
+    codec rather than ADPCM. There's no way to tell if this is actually the case 
+    until an audio packet is received from the client.  This assumption may be 
+    wrong, but currently we only support welcome messages in GSM format.  If a 
+    welcome message is played in GSM format for a some clients (linkbox) they 
+    will *SWITCH* to GSM when they receive it.  Meaning if you want an ADPCM 
+    conference you should *NOT* configure the conference to send a welcome 
+    message.
+
+13. Fixed a typo in the .connect command which caused duplicate dynamic 
+    conferences to be created.
+
+####################################
+Changes in version 0.23, Feb 02 2008: (limited beta release)
+
+Minor enhancement:
+1. Added Echolink firewall mitigation code courtesy of Johnathan K1RFD.
+
+2. Added support for a new configuration variable ShowStatusInInfo to 
+   enable thelinkbox to be configured to automatically show the name the
+   current connection in the info field on the EchoLink directory servers.
+   See the sample configuration file for more details.
+
+####################################
+Changes in version 0.22, Jan 28 2008: (beta release)
+
+New features:
+1. Added support for CTCSS input from external decoders.  Hardware connections
+   are defined by the new port configuration variables RxCtcssMethod, CTCSS_Bit 
+   and InvertCTCSS. The new variable RxCTCSSMode is used to enable and
+   disable the CTCSS mode. See the sample port configuration files for more 
+   details.
+
+2. Added new configuration variable DtmfCTCSSMode to specify if CTCSS is
+   required to enter DTMF commands or not.
+   
+3. Added new script getnews.sh to fetch the weekly Amateur Radio Newsline 
+   report and format it for playback by thelinkbox. (You'll find it in the 
+   new scripts subdirectory).
+   
+Bug Fixes:
+1. Corrected bugs in the .shutup command, it actually works now.
+
+####################################
+Changes in version 0.21, Jan 13 2008: (beta release)
+
+Bug Fixes:
+1. Added code to the .link command to suppress the display of VoIP inactive
+   connections.
+   
+2. Restored Play4 command fixes added in 0.19 that were lost in 0.20.
+
+3. Corrected corrupted port to port audio which occurred on some hardware
+   platforms and some operating systems.  (Specifically on a Dell GX240
+   running FreeBSD 6.1).
+
+####################################
+Changes in version 0.20, Jan 06 2008: (limited beta release)
+
+Bug Fixes:
+1. Replaced hardcoded phoney EchoLink number that is used when thelinkbox
+   is not logged into the EchoLink network with a crc of the user's callsign.
+   Fixes EchoLink and RTP connections between two nodes when neither node
+   are logged into EchoLink.
+   
+   
+####################################
+Changes in version 0.19, Jan 01 2008: (limited beta release)
+
+Minor enhancement:
+1. Added a new port configuration variable RxTimeout suggested by VK3JED.
+   An receiver timeout is useful to prevent a signal on one input of a 
+   multiple input repeater from preventing other inputs from being used
+   because of a transmitter timeout.  The previous configuration variable
+   TimeoutTone was changed to TxTimeoutTone and a new configuration variable
+   RxTimeoutTone was added.
+
+2. Added new port configuration variable DtmfCoverTone to specify a tone to 
+   play while a audio is muted because a DTMF command sequence is in progress.
+   
+3. Added code to set the environment variable TLB_PORT with current port 
+   name when external scripts are executed by the .script command.
+   
+4. Added code to the .tonegen command to allow a tonespec that's running
+   to be stopped.  .tonegen !<id>.
+
+5. Modified the Play4 command so file playback is also sent to the currently
+   selected port.
+
+Bug Fixes:
+1. Corrected a bug which caused the configuration variables Ctone and 
+   CtoneMap to be applied to the wrong port.  Really, I'm not just kidding
+   this time.
+   
+2. Corrected a bug which caused .set Ctone = 0 or .set VoipCtone = 0 from 
+   being accepted.  A tone ID of zero disables courtesy tones.
+   
+3. Corrected a bug which caused severely broken ADPCM receive audio introduced 
+   in 0.13.  Yet another VK3JED find.
+   
+4. Corrected a bug which caused thelinkbox to hang when attempting to play
+   a tonespec with a with a syntax error.
+   
+5. Modified the leading squelch suppression logic enabled by the configuration 
+   variable UngatedRx to wait for two buffers w/o COS before tossing the
+   first buffer with COS.  Improves excessive chopping on marginal signals.
+   
+####################################
+Changes in version 0.18, Dec 27 2007: (beta release)
+
+Bug Fixes:
+1. Corrected a bug which caused the configuration variables Ctone and 
+   CtoneMap to be applied to the wrong port.
+   
+2. Corrected a new bug introduced by the child exit logic changes in last 
+   release.  If a child exited while thelinkbox was in a select call 
+   thelinkbox would report "select() failed, No child processes (10)" and
+   then exit.
+
+####################################
+Changes in version 0.17, Dec 21 2007: (limited beta release)
+
+Minor enhancement:
+1. Added port configuration variable MinDtmfInterdigitTime to specify the 
+   minimum amount of time between repeated digits in milliseconds. Users in 
+   marginal areas, marginal decoders, incorrect levels or other problems 
+   can cause a single DTMF digit held longer than the decoder's decode time 
+   to be decoded multiple times.  This variable specifies a minimum delay 
+   time between identical digits for them to be accepted as distinct entries. 
+   
+2. Added port configuration variable Min1stDigitHoldTime to specify the 
+   minimum amount of time that a DTMF digit that initiates a DTMF command 
+   must be sequence held to be considered valid. Helps mitigate voice falsing.
+   
+3. Added port configuration variable Dtmf1stDigits to limit the DTMF digits
+   that may initiate a command sequence. This is another feature to help 
+   mitigate voice falsing.
+
+Bug Fixes:
+1. Corrected a bug that could cause the exit status of child processes to be
+   missed when if more than one child exits at a time.  This bug prevented
+   EventScripts from being called correctly.
+ 
+2. Corrected a bug that prevented "$1" in the DTMF command table from being 
+   expanded for 2 digit DTMF commands.
+   
+3. Changed the VoIP courtesy tone generation logic to prevent courtesy tones 
+   from being sent when the dejitter buffer was near empty, but not 
+   completely empty.  Prevents unintentional arcade machine emulation.
+
+####################################
+Changes in version 0.16, Dec 19 2007: (limited beta release)
+
+Minor enhancement:
+1. Changed configuration variable "Node" to a command for easier access.
+   Running the .port without arguments lists the available ports plus 
+   current port status.
+   
+2. Added code send the "NAME" RTCP field to SF and RTP clients.  The
+   default value is ConferenceCall unless overridden by the new configuration 
+   variable FullName.  The CNAME field is now set to "CALLSIGN" for 
+   compatibility, previously it was set to ConferenceCall.
+   
+####################################
+Changes in version 0.15, Dec 18 2007: (limited beta release)
+
+Bug Fixes:
+1. Added code to handle case where TxKeyMethod = 1 and DtmfMethod = 0 
+   (serial EchoLink interface with DTMF disabled).  Previously the Tx was
+   not keyed unless DtmfMethod was also 1.
+  
+2. Fixed a bug which caused a crash which occurred when CW ID went off 
+   while playing a file (and probably under other undiscovered 
+   circumstances).  Thanks to VK3JED for uncovering the bug and providing 
+   remote access to his system for debugging.  Running gdb on core dumps 
+   1/2 a world away... priceless!
+   
+3. Removed CORE_DUMP() from GsmTx which gets called when there are active
+   simultaneous SF and EchoLink GSM connections.  Not only is the case not
+   a "can't happen", Tony made it happen!
+   
+4. Corrected bug in which could cause the transmit timeout timer tone to be
+   truncated.
+
+####################################
+Changes in version 0.14, Dec 14 2007: (beta release)
+
+Bug Fixes:
+1. Corrected bug introduced into EchoLink and RTP/GSM transmission introduced
+   by 0.13.  
+
+####################################
+Changes in version 0.13, Dec 14 2007: (beta release)
+
+New features:
+1. Added GNU readline support to tlbcmd and tlbchat. Command history is
+   now available via the up arrow among a huge list of other things that
+   readline knows now to do.  Executive summary: use the cursor keys and 
+   they might just do what you expect.
+   
+Minor enhancement:
+1. Added -p <port> switch to the .connect command to allow Speak Freely 
+   and RTP connections to be made to any port.
+   
+2. Added -m switch to the .connect command connections to be established in
+   monitor mode.
+
+3. Added configuration variable VoipOutMap to specify which RF ports to 
+   connect to an VoIP connection established with the .connect command.
+   This replaces the previous behavior of .connect which only connected the 
+   current port as defined by the Node variable to the new connection.
+ 
+4. Reworked .link command syntax and functionality.  The .link command now
+   uses port names rather than port numbers and also supports Voip connections.
+   Ports are now linked in both directions unless the new -m switch is 
+   specified.  New syntax: .link [-m] <destination> <source> [<source>...].
+   
+5. Added display of port mapping's for VoIP connections to .link (no arguments)
+   command.
+   
+6. Modified all configuration "Map" type configuration variables to take
+   symbolic port names rather than numeric port names. 
+   
+7. Replaced the previously optional NodeName configuration variable with
+   CreatePort.  The CreatePort directive is now used to create an RF port
+   that following port configuration variables will reference.  The old 
+   port configuration variable will be replaced with a command in the next
+   release.
+   
+8. Added support for the -p command line parameter to the iMic emulation in
+   tlbcmd.
+   
+Bug Fixes:
+1. Modified code so data is always sent from the appropriate port. Previously
+   IRLP data (after conversion to EchoLink format) was sent to the EchoLink
+   ports, but from the IRLP ports.  Normally this is not a problem, but if
+   a user's firewall is using dynamic rules created by outbound packets then
+   the these packets would be lost.  Effect is some EchoLink clients can not
+   hear IRLP stations via integrated IRLP/EchoLink conferences.
+   
+2. Fixed major audio problems when one VoIP connect was linked to multiple
+   RF ports.
+   
+3. Modified Speak freely protocol code to send GSM packets of the same size
+   as the legacy Speak freely code.  Previously thelinkbox sent 4 GSM frames
+   per UDP packet (the same as EchoLink and RTP) which caused the brain
+   damaged packet repacker in thebridge to do the wrong thing (TM).  This
+   prevented thelinkbox from talking to the IRLP side of integrated 
+   IRLP/EchoLink conferences.
+   
+4. Corrected tlbcmd's log filename generation for iMic, iSpeaker and play
+   emulation.
+
+5. Added code to set the sendinghost in Speak Freely headers.
+   
+Other changes:
+1. Renamed configuration variable DefaultMap to VoipInMap to better reflect
+   usage.
+
+####################################
+Changes in version 0.12, Dec 7 2007: (beta release)
+
+Minor enhancement:
+1. Added a configuration variable (VoipDejitterDelay) to allow the Internet
+   dejittering buffering delay to be tweaked.  
+
+Bug Fixes:
+1. Corrected bug in ADPCM transmissions that caused severe clicks and audio
+   distortion.
+
+2. Corrected bug what caused multiple copies of tlb to (attempt) to run
+   at the same time when the EventScript variable pointed to something 
+   that didn't exist or wasn't executable.
+   
+3. Modified the .id command so it works when IdInterval is 0.
+
+   
+####################################
+Changes in version 0.11, Dec 5 2007: (limited beta release)
+
+Minor enhancement:
+1. Added CtoneResetsTimeout to allow transmit timeout timer to be reset by
+   courtesy tone rather than waiting for transmitter unkey.
+
+2. Added support for 8 bit .wav files.
+
+Bug Fixes:
+1. Moved transmitter keying from Audio_Handler to WriteAudioOut to ensure
+   transmitter is always keyed when audio is written.  Previously certain
+   timing cases (like the first .tonegen command after startup) would not
+   key the transmitter.
+
+2. Fixed infinite loop in AddToneGen that occurred when a tonegenerator was 
+   added while a different one was running.
+   
+3. Applied fix from wb5tts to correct uninitialized buffer bug in UsbInit
+   which occurred when the USB dongle is only audio device.
+   
+4. Corrected bug in CToneGen that caused tone generation to fail randomly
+   on the first tone segment when the uninitialized garbage in Tone1Angle
+   and Tone1Angle looked like a floating point "not a number".
+   
+5. Corrected transmitter timeout handling for VoIP clients.  Previously
+   the VoIP timeouts were not reset when the VoIP client stopped talking.
+   
+6. Corrected bug in VoipAudioAvailable while allowed audio to be consumed
+   during the buffering state.  Caused audio dropouts at beginning of
+   ADPCM transmissions.
+   
+####################################
+Changes in version 0.10, Nov 30 2007: (beta release)
+
+New features:
+1. Added .tonegen command.
+2. Added .dtmfgen command.
+3. Added ToneSpec configuration variable to store tone specifications for
+   that can be used for a variety of purposes such as courtesy tones, 
+   command acknowledgements, invalid command indication, timeouts, 
+   DTMF cover tones, busy tones, dial tones, etc.
+4. Added support for transmitter hang times.  Hang time is set by the 
+   new port configuration variable HangTime.
+5. Added support for courtesy tone generation defined by the new port
+   configuration variables Ctone, CtoneMap and CtoneDelay.
+6. Added transmitter timeout timer controlled by new port configuration 
+   variable TxTimeout. If desired the port configuration variable
+   TxTimeoutTone may be set to a tone to play on timeout.
+
+Minor enhancement:
+
+1. Modified code to display the physical USB address of compatible dongles.
+
+Bug Fixes:
+1. Corrected bug which left transmitter keyed forever following CW message.
+2. Deleted left over debug code that mapped port 1 to port 0 on start.  
+   This caused crashes when the .link command was run without arguments if 
+   the system didn't have a port 1.
+3. Corrected error message displayed by when the SerialDevName configuration
+   variable wasn't defined.
+4. Corrected bug in the .set command that would cause a crash when displaying
+   values of configuration variables that were changed to class members in
+   version 0.09.
+
+####################################
+Changes in version 0.09, Nov 26 2007: (beta release)
+
+New features:
+1. Added support for CM108 based USB audio dongles.
+2. Added support for parallel port under FreeBSD.
+3. Modified code to allow multiple radio ports.  The configuration file 
+   variable "port" is used to create additional ports as well as control
+   which port existing commands are apply to.
+4. Added .link and .unlink commands.
+5. Added code to select USB devices by physical address as well as USB 
+   serial number.
+6. Added support for include files in configuration files.
+
+Bug Fixes:
+1. Corrected compile errors under FreeBSD.
+
+
+####################################
+Changes in version 0.08, Nov 10 2007: (first public beta release)
+
+... lots ...
+
+####################################
+Changes in version 0.02, April 20 2007: (limited beta release)
+
+New features:
+1. Added an option to an use external text to speech synthesizer for voice 
+   prompts instead of PCM audio files.  Tested with festival-lite
+   (http://www.speech.cs.cmu.edu/flite/), but should be usable with any TTS
+   system that can generate 16 bit 8Khz wav files.  Read the comments for
+   the configuration file variable TTS_ExePath for more information.
+
+####################################
+Changes in version 0.01, April 7 2007: (limited beta release)
+
+Initial release
+

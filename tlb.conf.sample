@@ -1,0 +1,703 @@
+; $Id: tlb.conf.sample,v 1.21 2012/12/09 18:57:52 wb6ymh Exp $
+
+;Lines beginning with ';' or '#' are comments, if you decide to set any of the
+;optional settings be sure to delete the leading ';' character before the 
+;configuration variable.
+;
+; Thelinkbox is based on the code from the "thebridge" EchoLink conference
+; server package and uses the same configuration file plus variables that
+; are unique to thelinkbox.  In the following mentally replace "conference"
+; with "node".  i.e. The ConferenceCall variable is really the callsign
+; of your node.
+
+###############################################################################
+; The following parameters must always be set 
+
+; ConferenceCall - Callsign of node.  Required.
+; If the node is to be used on the EchoLink network the callsign MUST be 
+; entered in UPPERCASE.  The callsign must be either a link "-L", 
+; repeater "-R" or conference name "*{name}*", the EchoLink directory server 
+; not accept a login from thelinkbox using just a "bare" callsign.
+; 
+; This variable should be set even when thelinkbox is not going to be used
+; with EchoLink.
+ConferenceCall = W1AW
+
+; Working directory.  This is where thelinkbox creates its files. Required.
+; Make sure that the specified directory exists and that the user account
+; used to run TLB has read and write privileges in it.
+WorkingDir = /usr/home/tlb
+
+###############################################################################
+; Include configuration files for all radio ports.
+; The port configuration can be included in the main file if desired, but
+; it's probably cleaner and less confusing to have one configuration file
+; per port.  Use of a full path is recommended to avoid confusion.
+;
+
+include /usr/home/tlb/port0.conf
+include /usr/home/tlb/port1.conf
+
+###############################################################################
+; Variables used to configure optional text to speech synthesizer
+
+; Set the following variable to use the specified text to speech synthesizer
+; instead of PCM file for announcements.  This gives a greater flexibility 
+; on what can be said but it doesn't sound as good as PCM files.
+; The program is expected to accept two arguments:
+;       argument1 = path to text file containing text to convert
+;       argument2 = path to output WAVE file.
+; The TTS program should generate the audio in a 16 bit 8 Khz WAVE file format.
+; TTS_ExePath can be set to point to a script file that provides a wrapper
+; for the actual TTS program to add any command line options needed by the
+; TTS program.
+; 
+; TTS_ExePath = /usr/bin/flite
+
+; By default thelinkbox inserts spaces between letters when using a speech 
+; synthesizers when saying a callsign to attempt to get speech synthesizers to
+; spell the callsign out letter by letter.  Unfortunately some speech 
+; synthesizers (Cepstral for example) pronounce single letter abbreviations 
+; when they follow a number.  For example "K I 4 S W B" results in 
+; "K I 4 South W B" and "w d 5 m" results in "w d 5 meters". 
+; The following variable specifies text to insert between callsign characters
+; to force the speech synthesizer to spell the callsign letter by letter.
+; The dash, '-', seem to work well for Cepstral 4.x and "<break />" works
+; well for Cepstral 5.x.  
+;CallSignSpelling = -
+
+; The following variable specifies an optional file containing words to be 
+; used to spell callsigns phonetically.  The file should contain a single
+; word per line starting with the word for 'A' and ending with the word for '9'
+; See the files scripts/phonetic.ham, /scripts/phonetic.us and 
+; scripts/phonetic.ansi.
+;PhoneticFilePath = phonetic.ham
+
+; The following variable sets the amount of audio that is buffered on 
+; VoIP connections before being sent to sound card in milliseconds.  
+;
+; The propagation delay across the Internet from one location to another is 
+; not constant even for packets that are sent at almost the same time.  It 
+; is essential that there be some buffering of audio in VoIP applications to 
+; avoid audio dropouts when packets arrive late.  No or too little buffering 
+; causes dropouts and too much buffering causes unnecessary delays which 
+; become intrusive to normal conversations.
+;
+; The minimum amount of buffering is two packets.  The duration of audio 
+; contained an a single packet varies with the protocol and compression 
+; algorythm.  Here are some numbers:
+;
+; RTP/GSM       - 80 milliseconds
+; RTP/ADPCM     - 121.5 milliseconds
+; SF/ADPCM      - 121.5 milliseconds
+; SF/GSM        - 200 milliseconds
+;
+;VoipDejitterDelay = 500
+
+; Set this variable to zero to disable packet level audio conferencing.  
+; Note: when conferencing is enabled packets are only relayed between 
+; users using the same Codec, audio packets are not automatically
+; converted from one format to another.
+;ConfEnable = 0
+
+; Set this variable to zero to disable packet level text conferencing.
+;ConfTextEnable = 0
+
+
+###############################################################################
+; The following parameters are used when thelinkbox is used with the EchoLink
+; network. 
+
+; ConferencePass - EchoLink password. Required if the node is to be used
+; on the EchoLink network.
+ConferencePass = CW
+
+; ConferenceQth - location or info string displayed on station list. Required.
+ConferenceQth = Newington, Ct.
+
+; The Qth information (or information set by the Info command) will normally
+; be replace with "In Conference <call>" or "Connected to <call>" when 
+; thelinkbox is connected.  Set the following variable to zero to disable 
+; that feature.
+; 0 = never override ConferenceQth or .info command settings.
+; 1 = show connection state for conferences only.
+; 2 = show connection state for conferences and stations.
+;ShowStatusInInfo = 2
+
+; Your email address.  This email address is sent to the EchoLink directory 
+; server and is only visible to the EchoLink support group. An email address 
+; is required so that EchoLink Support can contact you about validation.
+; Required.
+EmailAdr = w1aw@arrl.net
+
+; These variables should be set to the same values as you use with your
+; EchoLink client.  The first server should be the one that's closest to you.  
+
+; Hostname of primary directory server
+;DirServerHost = server1.echolink.org
+
+; Hostname of directory backup server #1
+DirServerHost1 = server2.echolink.org
+
+; Hostname of directory backup server #2
+DirServerHost2 = server3.echolink.org
+
+; Hostname of directory backup server #3
+DirServerHost3 = server4.echolink.org
+
+; Number of seconds between logins (status updates) to the directory server
+; Set to zero to disable EchoLink functionality.
+; For use with EchoLink, do not use any value other than 360
+;LoginInterval = 360
+
+; Set this variable to zero to prevent thelinkbox from opening sockets
+; for EchoLink ports.  The previous variable prevents thelinkbox from logging
+; into the EchoLink directory server, whereas this variable completely
+; disables EchoLink functionality.
+;EchoLinkEnable = 0
+
+; Number of seconds between station list refreshes
+; Set to zero to disable station refreshes
+; For use with EchoLink, do not use any value less than 310
+;StationListInterval = 600
+
+; This variable specifies how many seconds a user's record remains in memory 
+; after he has logged out of the EchoLink system.
+;InactiveDirTimeout = 51000
+
+###############################################################################
+; DTMF encoder tuning.  Common for all ports.
+; ITU spec requires that 
+;   a. Tones with a duration less than 23 ms must be rejected.
+;   b. Tones with a duration more than 40 ms must be accepted.
+;   c. An interruption of more than 40 ms must be accepted as a pause.
+;   d. An interruption of less than 10 ms must be tolerated.
+;       
+; So Duration should be between 40 and 40+23 to ensure a decode and preclude 
+; a double decode.
+;DtmfEncodeDuration = 51;
+;DtmfEncodePause = 51;
+
+; The following variable controls the availability of the DTMF pad in the
+; stock EchoLink client.  By default the DTMF pad is available.  To make it
+; more difficult for EchoLink users on a PC to send touchtone to your node
+; uncomment the following line.
+;EnableRemoteDTMF = 0
+
+###############################################################################
+; Courtesy tones and telemetry tone definitions
+;
+; The following entries create sounds that can be used for a varity of 
+; purposes such as courtesy tones, command acknowledgements, 
+; invalid command indication, timeouts, DTMF cover tones, busy tones, 
+; dial tones, etc.
+; 
+; Each tone specification includes a numeric identifier that is used
+; to reference the tone specification in commands. Stored tones can be played
+; manually or from scripts by using the .tonegen #<id>
+;
+; Unlike most variables there can be multiple ToneSpec variables in the 
+; configuration file.
+;
+;   .tonegen [<tone1 freq>] [<tone2 freq>] [<level>] <duration> ...
+;   # <id>         Play saved ToneSpec #<id>  
+;   ID <number>    Assign a reference number the tone for future reference.
+;   TF1 <freq>     Set Tone 1 frequency, 0 = no tone
+;   EF1 <freq>     Set Tone 1 end frequency for sweeps (starts at TF1)
+;   TL <level>     Set Tone 1 and 2 level
+;
+;   TF2 <freq>     Set Tone 2 frequency, 0 = no tone
+;   TL2 <level>    Set Tone 2 level
+;   DUR <duration> duration of tone segment in milliseconds.
+;   
+;   RPT <count>    repeat pattern from the beginning or last rpt count times,
+;                  -1 means repeat until cancelled.
+;
+;   Each tone segment must have an duration, all other fields are optional.
+;   
+;   Tone frequencies are cleared set to zero after each segment is generated.
+;   Tone levels are only changed if explicitly modified.
+;
+; single 900 hertz beep 
+ToneSpec = id 100 tf1 900 dur 100
+
+; 3 tone sequence courtesy tone
+ToneSpec = id 101 tf1 330 dur 100 : tf1 500 dur 100 : tf1 660 dur 100
+
+; Same thing, but twice as fast
+ToneSpec = id 102 tf1 330 dur 50 : tf1 500 dur 50 : tf1 660 dur 50
+
+; two dual tone sequence courtesy tone
+ToneSpec = id 103 tf1 440 tf2 500 dur 200 : tf1 440 tf2 350 dur 200
+
+;dial tone that runs for 10 seconds
+ToneSpec = id 104 tf1 350 tf2 440 dur 10000
+
+;ringback tone that runs for 60 seconds
+ToneSpec = id 105 tf1 440 tf2 480 dur 2000 : dur 4000 : rpt 10
+
+;busy tone that runs for 10 seconds
+ToneSpec = id 106 tf1 480 tf2 620 dur 500 : dur 500 : rpt 10
+
+; single dual tone beep
+ToneSpec = id 107 tf1 941 tf2 1336 dur 100
+
+; One second of 700 hz every 10 seconds
+ToneSpec = id 108 tf1 700 dur 1000 : dur 10000 : rpt 10
+
+; typical remote interfaced - Beep Boop
+ToneSpec = id 109 dur 920 : tf1 1633 dur 60 : dur 60 : tf1 1209 dur 60
+
+; typical function complete - boop boop
+ToneSpec = id 110 dur 700 : tf1 1209 dur 80 : dur 80 : tf1 1209 dur 80
+
+; typical remote monitors link - Boop
+ToneSpec = id 111 dur 800 : tf1 697 dur 180
+
+; typical remote interfaced, carrier delay off - Beep
+ToneSpec = id 112 dur 920 : tf1 1633 dur 60 
+
+; Nextel PTT Beep courtesy of WD5M
+ToneSpec = id 113 dur 100 : rpt 1 : tf1 1800 dur 24 : dur 24 : rpt 2 : tf1 1800 dur 48 : dur 250
+
+###############################################################################
+; Information about your node for publishing via the EchoLink or 
+; APRS-IS (Automatic Packet Reporting System-Internet Service) systems.
+
+; Set this varable to send node information to the EchoLink directory server
+; so your node will be listed on the http://www.echolink.org/links.asp.  Your
+; node must be configured to run on the EchoLink network.
+;AvrsEnable = 1
+
+; Node location
+;Lattiude in decimal degrees, negative values for the southern hemisphere
+;Latitude = 33.743386
+
+;Longitude in decimal degrees, negative values west of the prime meridian
+;Longitude = -118.366453
+
+; Transmitter power in watts
+;TxPower = 10
+
+; Antenna height above average terrain in feet
+;Haat = 100
+
+; Antenna gain in DB
+;AntGain = 3
+
+; Heading of the main antenna lobe in degrees.
+; If antenna is an omni enter 0.0, if the antenna is directional and pointed 
+; due north enter 360.0.
+;AntDir = 0.0
+
+; Transmitter frequency in Mhz
+;Frequency = 146.52
+
+; Receiver offset from transmitter in Mhz for repeaters, leave unset for
+; simplex nodes.
+;RptOffset = -.6
+
+; Continous tone coded squelch system system frequency required to open
+; receiver's squelch. In Hertz.  Leave unset for carrier squelch system
+;CTCSS = 100.0
+
+###############################################################################
+; APRS-IS specific variables (the variables above most also be set)
+
+; Set this variable to send node information to APRS-IS (Automatic Packet 
+; Reporting System-Internet Service) system.
+;AprsIsEnable = 1
+
+; Set the following variables to select the ARPR symbol for APRS and APRS-IS
+; packets.  See http://www.aprs.net/vm/DOS/SYMBOLS.HTM and
+; http://wa8lmf.net/aprs/APRS_symbols.htm for information on now to select
+; APRS symbols.
+;AprsSymbolTable = /
+;AprsSymbolCode = r
+
+; Set this to set your own APRS object name.  By default the object name
+; is "EL-<callsign>", you many want "EL-<nodenumber>", or 
+; "IRLP-<station number>".  The maximum length of an APRS object name is
+; 9 characters
+;AprsObjectName = EL-1234
+
+; By default the nodes frequency and CTCSS tone are listed in the APRS comment
+; field in packets sent to the APRS-IS system.  This variable may be used
+; to override the default.
+;AprsIsComment = "Ragchewers radio club"
+
+; Set this variable to the number of seconds between updates to APRS-IS.
+;AprsIsInterval = 3600
+
+###############################################################################
+;None of the following are required, they may be used if desired to 
+;override the default settings.
+
+; If you do not wish thelinkbox users to be able to write to the disk set
+; this variable to zero.
+;EnableDiskCommands = 0
+
+; Administrator password.  Please do not use a "valuable" password here,
+; it is sent in clear text via UDP to the RTP port.  i.e. it can be sniffed.
+; You have been warned.
+;AdminPass = secret
+
+; Sysop password.  The sysop password is a lower level password that is 
+; typically used by net control stations.  It provides to some, but not all,
+; of the commands available to Administrators. Please do not use a "valuable" 
+; password here, as with the administrator password it is sent in clear text 
+; via UDP to the RTP port.  i.e. it can be sniffed.
+; You have been warned again. 
+;SysopPass = anothersecret
+
+; User ID for thelinkbox to run under.
+; If thelinkbox is started by the system startup scripts it will probably
+; be running as the superuser.  This is not necessary and is very undesirable
+; from a system security standpoint.  If RunAsUser is set thelinkbox will 
+; change its userid to that user after opening the syslog. If this is not 
+; set thelinkbox will attempt to change userid to the user "tlb".
+; 
+;RunAsUser = tlb
+
+; Conference ID - Text shown at the top of the station list
+;ConferenceID = My Conference server
+
+; Banner - shown at the bottom of station list.
+; Note: The banner is pushed off the bottom of the station list if needed
+; to make room for users callsigns.  The ConferenceID is always displayed.
+; Use the screen the way you like, but I'd recommend that the ConferenceID
+; be kept to one line and any other things you would like to display be
+; put in the banner area.  Comment out the following lines if you don't want
+; a banner.  Note unlike most variables there can be more than one Banner
+; variable in the configuration file, each one simply adds another line.
+
+Banner = Welcome to my node
+Banner = Type ".help" for a command list.
+Banner = See http://CQiNet.sf.net for more info.
+
+; Maximum amount of time in milliseconds between RTP audio packets before 
+; assuming that a conference member has stopped talking.
+;ConfAudioTimeout = 800
+
+; Maximum amount of time in seconds between RTCP control packets before 
+; assuming that a conference member has left the conference.
+;ConfMemberTimeout = 40
+
+; Maximum number of simultaneous conference clients.  Each client requires
+; approximately 17.5k bps of upstream bandwidth, the default of 8 users is 
+; about right for a cable modem or dsl line.  Set this to no more than
+; n = (Upstream BW/17500) + 1;
+; or for a T1 line (1.54 mb)
+; n = (1540000 / 17500) + 1 = 89
+;MaxConferenceClients = 8
+
+; Set this to append "<SB>" to conference ID when no one is talking.
+; (Like the iLink conference server)
+;SB_Enable = 1
+
+; Set this to append "[number of users]" to the conference ID line.
+;UserCountEnable = 1
+
+; Set this to include the maximum number of users in user display after
+; conference ID.  (Requires UserCountEnable to also be set)
+; Appends "[number of users/Maximum users]" after conference ID line.
+;MaxCountEnable = 1
+
+; Set this to append the user count(s) after the location string in the
+; directory server listing.  UserCountEnable and MaxCountEnable above
+; control the format.
+;UserCountInLocation = 1
+
+; Set this to the minimum number of milliseconds that stations must wait
+; between transmissions.  Any transmissions made during this mandatory pause 
+; interval will be muted.  This parameter may help prevent repeater "bouncing" 
+; that occurs when multiple repeaters or link stations are logged into a 
+; conference room with poor operating parameters.  
+;
+; It will also ensure that there's a break between transmissions to allow 
+; simplex links to leave the conference
+; This variable may also be set using the pausetime command.
+;PauseTime = 1750
+
+; Set this to the minimum number of milliseconds that -L and -R stations
+; must transmit before being recognized.  This parameter may help prevent
+; repeater "bouncing" that occurs when multiple repeaters or link stations
+; are logged into a conference room with poor operating parameters.
+; This variable may also be set using the belchfilter command.
+;BelchTime = 2000
+
+; Age of DNS cache in seconds before it is updated.
+;DnsUpdateInterval = 900
+
+; Set variable to create a private conference.  A private conference will
+; be listed in the directory server as "Private conference" and will accept
+; connections only from stations which have been added to the access control
+; list.
+;PrivateConference = 1
+
+; This variable controls how often the log file is rolled over.
+; 0 - logging disabled. (The Unix version will use syslog for logging)
+; 1 - Never: single logfile, filename = tlb.log
+; 2 - Never: new logfile opened everyday, filename = tbdmmddyy.log
+; 3 - Daily: new logfile opened everyday, filename = tlb.log, tlb.bak
+; 4 - Weekly: new logfile opened everyday, filename = mon.log, tues.log, ...
+; 5 - Monthly: new logfile opened every month, filename = tbdmmyy.log
+;
+LogFileRolloverType = 1
+
+; This variable controls whether both callsign and IP address are shown in the
+; logs files on connect/disconnect.
+;ShowIPAddresses = 0
+
+; Set this variable to enable support for full duplex operation via VoIP links.
+; When full duplex is enabled thelinkbox informs the other end of VoIP links
+; that it is full duplex capable via a private extension added to the SDES
+; RTCP packets.  When full duplex is enabled the conferencing code forwards
+; packets received from other full duplex capable stations to other full 
+; duplex capable stations even if someone has "taken the floor" and is talking.
+; Any Echolink node may take the conference's "talk token" by beginning
+; a transmission while the conference is idle, but only a full duplex station
+; will be able to begin a new transmission while the station with the 
+; "talk token" is transmitting.
+;
+;FullDuplex = 1
+
+###############################################################################
+; The following variables control file playback
+;
+; These variables control the pauses between transmission when playing
+; back recordings. Times are specified in seconds.
+;
+; The original pauses between transmission are unmodified when MaxPlayBackPause 
+; is set to a large value and MinPlayBackPause is set to zero.
+;
+; The purpose of these variables are to allow pauses to either be compressed
+; or expanded for playback purposes.  For example setting MinPlayBackPause to
+; 5000 (5 seconds) will expand pauses between transmission to 5 seconds to
+; provide breaks to allow half duplex repeater links to be dropped during 
+; playback.
+;
+; On the other hand setting a MaxPlayBackPause allows long pauses to be 
+; shortened.
+;
+;MaxPlayBackPause = 5
+;MinPlayBackPause = 0
+
+; This variable sets a maximum uninterrupted transmission length for file
+; playback.  If a recording exceeds this limit a pause of MinPlayBackPause
+; seconds is inserted and then the playback resumes.  Time is specified in
+; seconds.
+;MaxPlayWithoutPause = 600
+
+; This variable specifies a welcome file to be played to users when they
+; connect to thelinkbox.  The file may be in one of two formats:
+;   tlb's (and tbd's) internal format
+;   8 khz .wav file.
+;
+; If the specified is in thelinkbox's internal format it will only be played
+; for Echolink clients using the legacy welcome file playback code common
+; with thebridge.  Such a file can be created using thelinkbox's
+; .record command or by using the tbdcnv utility (available separately).
+;
+; If the specified file is a wave file then it can be played for any VoIP 
+; client independent of CODEC and protocol.  This style of welcome file 
+; playback may also be disabled by the DisableWelcome Voip port configuration
+; variable.
+; 
+;WelcomeFile = welcome.tlb
+
+; This variable specifies the number of seconds to wait after the user
+; connects before the welcome message is played.  This provides time
+; for any voice announcements from the EchoLink client to complete.
+; NOTE: Any activity on the conference before the welcome file starts playing
+; will cancel the welcome message.  This prevents the welcome message from
+; playing in the middle of a live conversation.
+;
+;WelcomeDelay = 0
+
+; This variable specifies the number of seconds to wait after the conference
+; becomes free before bulletins queued with the .play4 command and using the 
+; -i flag command are played.
+;IdleTimeout = 0
+###############################################################################
+
+; If this variable is nonzero thelinkbox will save the information file 
+; (brag sheet) for connecting stations in files named "<callsign>.info".
+;
+;SaveInfoFiles = 0
+
+; If this variable is nonzero the users information file (brag sheet)
+; will be displayed instead of the usual station list the first time the
+; user transmits.
+; 
+;ShowStationInfo = 0
+
+; Set this variable to the IP address you wish thelinkbox to bind to. 
+; If this variable is not set then thelinkbox will listen to all available 
+; interfaces, this is normally what you want.
+;Bind2IP = 1.2.3.4
+
+###############################################################################
+; The following variables maybe be used to enable connectivity to non-Echolink
+; clients such as Speak Freely.  Since IRLP is based on Speak Freely this
+; allows suitably configured IRLP nodes to connect to the conference.
+
+; Set this variable to allow connections from Speak Freely 
+;SF_Enable = 1
+
+; Set this variable to a password that to be used by Speak Freely or
+; RTP clients to gain access to the conference.
+;RTP_Pass = yetanothersecret
+
+; Set this variable to specify a non-standard input port for RTP and 
+; Speak Freely and RTP clients.  This may be useful to allow multiple RTP 
+; applications to be run on a single host.  Note: the RTP spec requires this 
+; to be an even port, the associated control port will be the next (odd) port.
+; NB: If you set this value you must also set SF_ReplyPort below.
+;SF_Port = 2074
+
+; Set this variable to specify a non-standard port for RTP responses for 
+; Speak Freely and RTP clients. 
+;SF_ReplyPort = 2074
+
+; Set this variable to the value to be sent as the user's full name.
+; If the variable is not sent then ConferenceCall will be sent instead.
+;FullName = John Q Ham
+
+; Set this variable to the IP address you wish thebridge to bind to for
+; Speak Freely conferences. If this variable is not set then thebridge will 
+; listen to all available interfaces, this is normally what you want.
+;SFBind2IP = 5.6.7.8
+
+; Set this variable to specify the codec accepted by the conferencing code.
+; Packets from clients running other codecs are not be relayed to conference 
+; members.  The default value (GSM) is normally what you want for EchoLink
+; compatibility. NB: this only effects the conferencing code, thelinkbox is
+; always able to communicate using any of the supported codecs.
+;
+; Currently acceptable values are:
+; 0 - PCMU / uLaw / uncompressed
+; 3 - GSM (only codec supported for by EchoLink clients)
+; 5 - ADPCM
+; 97 - G.726 (non standardized value, used by AllStar and tlb)
+; 
+;CompressionType = 3
+
+###############################################################################
+; The following variables maybe be used to enable connectivity with RTP
+; clients.
+
+; Set this variable to specify an port or range of ports for RTP clients.   
+; Note: the RTP spec requires this to be an even port, the associated 
+; control port will be the next (odd) port.
+;RTP_Port = 2074-2077
+
+; Set this variable to the IP address you wish thebridge to bind to for
+; RTP conferences. If this variable is not set then thebridge will 
+; listen to all available interfaces, this is normally what you want.
+;RTPBind2IP = 5.6.7.8
+
+###############################################################################
+
+; Set this variable to the number of seconds after last activity before 
+; stations are automatically put into the lurk mode.
+;AutoLurkTimeout = 900
+
+; Set this variable to automatically put stations into the lurk mode after 
+; AutoLurkTimeout seconds of inactivity.  By default stations are only put
+; into the lurk mode after a timeout if the station specifically requested 
+; that mode by entering ".lurk".
+; Bit map:      1 - Autolurk -R stations
+;               2 - Autolurk -L stations
+;               4 - Autolurk "Normal stations"
+;               8 - Autolurk other conferences
+; i.e. Set DefaultAutoLurk to the sum of options you wish to enable, 
+; for example: 0 = autolurk disabled, 3 = autolurk just -L and -R, 
+; 15 = autolurk everyone.
+;DefaultAutoLurk = 0
+
+; Set this variable to the maximum allowable transmission time.  A value
+; of zero disables the timeout.
+;BlabOffTimer = 0
+
+; Set this variable to an alternate application name to be used for logging
+; purposes.  This is useful when running multiple copies of thelinkbox on a
+; single host. (*nix only)
+;AppName = tbd1
+
+; Set this variable to an alternate directory to use for PID files.  This
+; might be useful when running thelinkbox without root privileges. (*nix only)
+;RunDir = /var/run
+
+; The following variable is used to execute commands on thelinkbox startup.
+; This may be useful to set initial conditions.  For example if you always 
+; want your conference room linked to your club's repeater you might
+; issue a connect command to bring the link up. Unlike most variables 
+; there can be more than one StartupCmd variable in the configuration file, 
+; each one simply executes another command.
+;
+; NOTE: Startup commands are executed approximately 1 minute after the first 
+; successful login to a directory server.  This delay is necessary to ensure
+; that the conference's IP address has had time to propagate to all of
+; the EchoLink directory servers before connect commands are issued.  
+; For security EchoLink nodes refuse connections from other nodes unless they 
+; are listed in the directory server.
+;StartupCmd = connect W1AW-R
+
+###############################################################################
+; The following variables maybe be used to enable 3rd party or user written
+; programs to interface with thelinkbox.  See SCRIPTING.txt for more details.
+
+; Set this variable to enable local scripting using the tbdcmd utility.
+CmdPort = 5198
+
+; Set this variable to enable local chating the tbdchat utility.
+;ChatPort = 5199
+
+; Set this variable to point to a script/program to execute when "interesting"
+; events occur. 
+;EventScript = /home/tlb/myscript
+
+; Set this variable to point custom help file that will be displayed when the
+; user enters the '.help' command.  This may be used to document custom
+; commands.  Please be sure to include help for the built in commands as well.
+;HelpFile = /home/tlb/mycustomhelp
+
+; Set this variable to create a *nix style host file of EchoLink users.
+; The EchoLink node number is added after the IP address as a comment.
+;WriteHostFile = 1
+
+; Set this variable to included all hosts thelinkbox knows about in the hosts
+; file.  Normally only hosts that are currently logged in on the Echolink
+; directory server are included.  Use this feature carefully, the IP address
+; of hosts that are not currently logged in may be inaccurate especially
+; for users with dialup connections.  Hosts which are not logged in are
+; marked with "(off line)" after the EchoLink node number in the comment field.
+;IncludeAllHosts = 1
+
+; Set this variable to include the node's QTH in the hosts file.
+; NB: As of 6/29/2007 including QTH information in the hosts file breaks
+; the EchoIRLP scripts.
+;QthInHostsFile = 1
+
+###############################################################################
+
+; This variable specifies the maximum number of duplicate text messages
+; that may be received from a station before that station is automatically 
+; disconnected.  Duplicate text messages can be generated when a number
+; of conferences are connected together such that they form a closed loop.
+; There is code in thelinkbox which attempts to suppress this "feedback" 
+; but the detection logic is less than perfect.  Some versions of thelinkbox
+; are known to be unable to suppress loops of certain topologys.  The
+; automatic disconnect logic is intended as a safety measure to ensure that
+; all available bandwidth is not consumed by a text message feedback loop.
+; Although not recommended the automatic disconnection logic can be 
+; disabled by setting this variable to zero.
+;MaxDups = 100
+
+; Set this variable TempDir to specify a directory where temporary files 
+; are to be created.  Currently temporary files are used to update the DNS 
+; cache and when tlb is configured to use a text to speech system.  
+; If TempDir is not set the WorkingDir will be used for temporary files.
+;TempDir = /tmp
+

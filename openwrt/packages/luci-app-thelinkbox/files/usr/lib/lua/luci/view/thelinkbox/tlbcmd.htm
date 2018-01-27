@@ -1,0 +1,47 @@
+<%#
+ Copyright (C) 2009 GFRN systems
+
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful, but
+ WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ 02111-1307, USA.
+
+ The latest version of this program may be found at
+ http://CQiNet.sourceforge.net
+
+$Id: tlbcmd.htm,v 1.1 2009/06/05 16:24:17 wb6ymh Exp $
+-%>
+<%+header%>
+<h2><a id="content" name="content"><%:c_cmdline%></a></h2>
+
+<div id="content_tlbcmdlog">
+<textarea readonly="readonly" wrap="off" rows="25"  id="syslog"><%=tlbcmd_log%></textarea>
+</div>
+
+<form id="tlbcmd" name="tlbcmd" method="post" action="<%=REQUEST_URI%>">
+   <div class="cbi-value">
+      <label><%:c_command%></label>
+      <div class="cbi-value-tlbcmd">
+         <input id="cmd" type="text" name="cmd" size="30" value="" />
+         <input class="cbi-input-save" type="submit" name="submit" value="<%:c_send%>" />
+      </div>
+   </div>
+</form>
+
+<script type="text/javascript">
+var elem = document.getElementById('syslog');
+elem.scrollTop = elem.scrollHeight;
+document.getElementById('cmd').focus();
+</script>
+
+<%+footer%>

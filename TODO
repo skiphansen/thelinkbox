@@ -1,0 +1,93 @@
+To say the least this list is not complete or prioritize.
+
+Wish list
+
+Get USB support working on FreeBSD.
+
+Add reasonable authentication for VoIP connections.
+
+Modify code to give the option of sending CTCSS tone to a different 
+output than voice when card is run in stereo mode.
+    
+Add ability to adjust repeat levels in software as well as hardware to
+get a finer control than the 1 DB steps typically available on sound boards.
+    
+Add support for recording the local RF connection to the .record command.
+
+Provide support for sampling rates other than 8000 ?
+
+Add optional file locking for access to USB dongle GPIOs to allow external 
+program to take over control of GPIOs to send frequency information, etc.  
+IRLP style sharing can be used for the parallel port.  Sharing the serial 
+port is not as simple, perhaps an interface between external program and 
+thelinkbox to have the linkbox open and close the serial port on demand?
+
+Add .connect option to hide connections from user list for nailed up
+connections.
+
+Add (if it's not there already) logging of PID to the startup log messages.
+
+Add ability to drop CTCSS encode during an ID when no other audio is present.
+
+Add the ability to turn an external CTCSS encoder on and off in support of the
+above.
+
+Add ^C handler to tlbcmd when built w/ readline so we can save the history
+and cleanup the terminal settings before exit.
+
+===============================================================================
+Fix bugs:
+
+.rehash crash
+
+echoing audio when live audio from an RF port is mixed with a .wav file.
+
+.set tonespec = ... works, but the response is "variable ToneSpec is not set"
+since you can't view a tonespec.
+
+disconnect "#" then reconnect before the connection completely times out
+results in "you are already connected", but the kick bits aren't reset.
+
+sometimes at the end of a dtmf command completed by a timeout a burst of
+touchtone is heard.  This should have been long gone!  Where is it being
+held ???
+
+Host names are only resolved to IP address once for a connect command.  This
+isn't going to play with Dyanmic IP addresses very well... fix, fix.
+
+Test DtmfCTCSSMode.  I think it works, but K7KAJ doesn't.
+
+Add minimal matching logic to set command to prevent the need to type in
+the complete (and long) variable name.
+
+Add password to initial sdes packets if one is defined.
+
+add time stamps to audio buffers for later use by voting
+
+remove email address check when echolink is disabled.
+
+remove -L or -R check when echolink is disabled.
+
+prevent id from starting hang timer
+
+Restore TxTone variable to it can be initialized easily from the configuration
+file without having to write a script to do it.  
+
+rewrite tonegen routine to eliminate the use of floating point
+
+Add aux bit access: createaux <Aux name> <port> <number of bits> <shift>
+.aux set <Aux name> = <value>
+.aux read [-x] <aux name>
+
+
+Add support for multiple CTCSS tones for software decoder.  Also multiple
+bit inputs from external decoders?  Maybe just two.  Allows interesting
+applications like using one tone for local repeat and a different tone
+to enable VoIP/remote bases.
+
+Disabling Echolink (bEchoLinkEnabled = 0) kills the command port if it's
+on 5198 ...
+
+
+idle timeouts for tlb, and an event generated when there's a Rx or Tx timeout.
+

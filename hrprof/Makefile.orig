@@ -1,0 +1,38 @@
+CFLAGS = -g -Wall -O -I . 
+
+SRCS = README COPYING Makefile hrprof.c tprog.c
+
+all: libhrprof.a tprog
+
+libhrprof.a: hrprof.o	
+	rm -f libhrprof.a
+	ar r libhrprof.a hrprof.o
+
+tprog: tprog.o libhrprof.a
+	$(CC) $(CFLAGS) -o tprog tprog.o libhrprof.a -lm
+
+tprog.s: tprog.c
+	$(CC) -finstrument-functions -O -S tprog.c
+
+tprog.o: tprog.c
+	$(CC) $(CFLAGS) -finstrument-functions -c tprog.c
+
+install: all
+	install -c -m 644 libhrprof.a /usr/lib
+
+uninstall:
+	rm -f /usr/lib/libhrprof.a
+
+test:
+	make tprog
+	tprog
+	gprof tprog > g.out
+
+tar:
+	tar -cf - $(SRCS) | gzip > hrprof.tar.gz
+
+clean:
+	rm -f *.o tprog gmon.out g.out libhrprof.a *~ hist.out
+
+
+

@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# description: install thelinkbox startup scripts on RedHat Linux (System V like)
+# $Id: install,v 1.1.1.1 2007/04/07 23:55:39 wb6ymh Exp $
+
+set -x
+cd ..
+make install
+cd RedHat
+ln -s /usr/local/libexec/tlb /usr/sbin
+if [ ! -d /etc/rc.d/init.d ]; then
+   echo 'creating /etc/rc.d/init.d'
+   mkdir /etc/rc.d/init.d
+fi
+cp tlb /etc/rc.d/init.d
+ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc0.d/K73tlb
+ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc1.d/K73tlb
+ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc2.d/S73tlb
+ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc3.d/S73tlb
+ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc4.d/S73tlb
+ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc5.d/S73tlb
+ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc6.d/K73tlb
+

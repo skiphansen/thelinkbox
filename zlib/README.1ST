@@ -1,0 +1,11 @@
+The files in this subdirectory are not the complete distribution of the
+zlib library, nor are they necessarily the most recent.  I've only included 
+files actually needed by CQiNet applications to minimize bloat.
+
+The files here were originally taken from the 1.1.4 release of the zlib 
+library.
+
+Before using this code in other projects I would suggest that you visit the 
+original author's web site at:
+
+http://www.zlib.org
