@@ -1,0 +1,16 @@
+*.o
+*.in
+Makefile
+.deps
+*.a
+aclocal.m4
+autom4te.cache/
+config.h
+config.log
+config.status
+config/
+configure
+linkbox/tlb
+stamp-h1
+tlbcmd/tlbcmd
+
