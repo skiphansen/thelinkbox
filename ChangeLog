@@ -1,4 +1,19 @@
 #####################################
+Changes in version 0.55 8/31/2013
+
+Bug Fixes:
+1. Corrected audio issues on Big Endian boxes with wave file playback
+   and tone generation.
+
+#####################################
+Changes in version 0.54 7/7/2013
+
+Minor enhancements:
+1. Added patches from Kristoff - ON1ARF for sysfs GPIO access for PT.
+   (PTT only, no COS support)
+2. Corrected callsign announcements using PCM files.
+
+#####################################
 Changes in version 0.53 12/9/2012
 
 Minor enhancement:

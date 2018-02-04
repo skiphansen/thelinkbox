@@ -297,7 +297,7 @@ public:
 
    int bRxActive;
    int bCtcssActive;
-   int bTxKeyed;
+   int bTxKeyed;     // set even if TxInhibit is active
 
 // input level stats
    int MaxInSample;
@@ -386,6 +386,8 @@ protected:
    int LoadCommands(char *Filename);
    void ExecuteCommand(char *Command);
    void ExpandCommand(char *Command,char *DtmfCommand,char *DtmfWildCards);
+   void QueueAnnouncement(const char *phrase,int Flags,int ReplyPort);
+   void QueueWord(char *Word,int Flags,int ReplyPort);
 
 private:
 };

@@ -404,7 +404,7 @@ CPort::CPort()
    VoxTripDelay = 0;
    TxKeyMethod = 0;
 // ON1ARF
-	GpioSysClassId = -1;
+   GpioSysClassId = -1;
    RxCosMethod = 0;
    SerialBaudRate = 2400;
    DTMFPollTime = 50;
@@ -521,7 +521,7 @@ CPort::CPort()
 #endif
 
 // ON1ARF
-	gpiosc_fd=-1;
+   gpiosc_fd=-1;
 };
 
 CPort::~CPort()
@@ -553,9 +553,9 @@ CPort::~CPort()
    UsbShutdown();
 #endif
 
-	if (gpiosc_fd >= 0) {
-		close(gpiosc_fd);
-	}; // end if
+   if (gpiosc_fd >= 0) {
+      close(gpiosc_fd);
+   }; // end if
 }
 
 void CPort::KeyTx(int bKey)
@@ -611,49 +611,49 @@ void CPort::KeyTx(int bKey)
 #endif
          break;
 
-		case 7: // GPIO /sys/class/gpio/... method
-					// ON1ARF
+      case 7: // GPIO /sys/class/gpio/... method
+               // ON1ARF
 
-			// try opening file to /sys/class/... if not yet done
-			if (gpiosc_fd < 0) {
-				snprintf(gpiosc_fname,40,"/sys/class/gpio/gpio%d/value",GpioSysClassId);
+         // try opening file to /sys/class/... if not yet done
+         if (gpiosc_fd < 0) {
+            snprintf(gpiosc_fname,40,"/sys/class/gpio/gpio%d/value",GpioSysClassId);
 
-				gpiosc_fd = open (gpiosc_fname, O_WRONLY | O_NDELAY, 0);
+            gpiosc_fd = open (gpiosc_fname, O_WRONLY | O_NDELAY, 0);
 
-				if (gpiosc_fd < 0) {
-					LOG_ERROR(("%s: cannot open GPIO device %s for writing: %d (%s): %s",__FUNCTION__, gpiosc_fname, errno, strerror(errno)));
-				}; // end if
-				
-			}; // end if
+            if (gpiosc_fd < 0) {
+               LOG_ERROR(("%s: cannot open GPIO device %s for writing: %d (%s): %s",__FUNCTION__, gpiosc_fname, errno, strerror(errno)));
+            }; // end if
+            
+         }; // end if
 
-			// write to gpio device if possible
-			if (gpiosc_fd >= 0) {
-				int ret;
+         // write to gpio device if possible
+         if (gpiosc_fd >= 0) {
+            int ret;
 
-				const char on = '1';
-				const char off = '0';
+            const char on = '1';
+            const char off = '0';
 
-				if((bKey && !InvertPTT) || (!bKey && InvertPTT)) {
-					// turn ON
-					lseek(gpiosc_fd,0,SEEK_SET);
-					ret=write(gpiosc_fd,&on,1);
-				} else {
-					// turn OFF
-					lseek(gpiosc_fd,0,SEEK_SET);
-					ret=write(gpiosc_fd,&off,1);
-				}; // end else - if
+            if((bKey && !InvertPTT) || (!bKey && InvertPTT)) {
+               // turn ON
+               lseek(gpiosc_fd,0,SEEK_SET);
+               ret=write(gpiosc_fd,&on,1);
+            } else {
+               // turn OFF
+               lseek(gpiosc_fd,0,SEEK_SET);
+               ret=write(gpiosc_fd,&off,1);
+            }; // end else - if
                         
-				if (!ret) {
-					// something went wrong
-					LOG_ERROR(("%s: Error write to GPIO file %s failed. Reason %d (%s)",__FUNCTION__, gpiosc_fname, errno, strerror(errno)));
-				}; // end if
+            if (!ret) {
+               // something went wrong
+               LOG_ERROR(("%s: Error write to GPIO file %s failed. Reason %d (%s)",__FUNCTION__, gpiosc_fname, errno, strerror(errno)));
+            }; // end if
 
 
-				
-			}; 
+            
+         }; 
 
 
-			break;
+         break;
    }
 }
 
@@ -2121,7 +2121,11 @@ int CPort::AudioInit()
    int SampleSize = 16;
    int SampleRate;
    int Stereo = 0;
+#ifndef BIG_ENDIAN_MACHINE
    int Fmt = AFMT_S16_LE;
+#else
+   int Fmt = AFMT_S16_BE;
+#endif
    int bits;
    audio_buf_info BufInfo;
 #ifndef SNDCTL_DSP_SETFRAGMENT
@@ -2390,7 +2394,7 @@ int CPort::EndPointInit()
        6 - PCF8754 I2C expander on iMic
 
 // ON1ARF
-		7 - /sys/class/gpio/gpioXX/... GPIO writing
+      7 - /sys/class/gpio/gpioXX/... GPIO writing
 
    */
       if(TxKeyMethod < 0 || TxKeyMethod > 7) {
@@ -2400,13 +2404,13 @@ int CPort::EndPointInit()
       };
 
 
-		// ON1ARF
-		// GpioSysClassId should be set (i.e. != -1) for TxKeyMethod 7
-		if ((TxKeyMethod == 7) && (GpioSysClassId < 0)) {
+      // ON1ARF
+      // GpioSysClassId should be set (i.e. != -1) for TxKeyMethod 7
+      if ((TxKeyMethod == 7) && (GpioSysClassId < 0)) {
          LOG_ERROR(("%s: GpioSysClassId not set for TxKeyMethod 7\n",__FUNCTION__));
          Ret = ERR_CONFIG_FILE;
          break;
-		}; // end if
+      }; // end if
 
 
       /*
@@ -3430,11 +3434,11 @@ int CPort::OpenParallelPort()
       }
       else {
          if((Ret = pParallel->Init()) == 0) {
-				pDevice = pParallel;
-			}
-			else {
-				delete pParallel;
-			}
+            pDevice = pParallel;
+         }
+         else {
+            delete pParallel;
+         }
       }
    }
 

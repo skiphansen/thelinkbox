@@ -296,6 +296,11 @@
 #define ALOG(x) if(Debug & DLOG_VOIP_AUDIO) LogErr x
 #define TLOG(x) if(Debug & DLOG_TBURST) LogErr x
 
+
+
+#define BYTE_SWAP_SHORT(x) (((x & 0xff) << 8) | ((x & 0xff00) >> 8))
+
+
 /*
 bytes      variable      description
 0  - 3     'RIFF'/'RIFX' Little/Big-endian
@@ -1631,6 +1636,9 @@ void Node::StartNextAnnoucement()
             }
             else {
             // Stupid test for now... fix me someday
+#ifdef BIG_ENDIAN_MACHINE
+               Hdr.wBitsPerSample = BYTE_SWAP_SHORT(Hdr.wBitsPerSample);
+#endif
                if(Hdr.wBitsPerSample == 8) {
                   b8BitFile = TRUE;
                   break;
@@ -1737,79 +1745,114 @@ void Node::PlayAnnouncementFile(char *FileName,int Flags,int ReplyPort)
    }
 }
 
+void Node::QueueAnnouncement(const char *phrase,int Flags,int ReplyPort)
+{
+   PlayPCM *p;
+
+   if((p = (PlayPCM *) malloc(sizeof(PlayPCM))) == NULL) {
+      LOG_ERROR(("%s: Error: out of memory\n",__FUNCTION__));
+   }
+   else {
+      p->Link = NULL;
+      p->ReplyPort = ReplyPort;
+      p->Flags = Flags;
+      p->FileName = strdup(phrase);
+      if(pPlayHead == NULL) {
+         pPlayHead = p;
+      }
+      else {
+         pPlayTail->Link = p;
+      }
+      pPlayTail = p;
+
+      if((Flags & PLAY_FLAG_TTS) == 0 && Playfp == NULL) {
+         StartNextAnnoucement();
+      }
+   }
+}
+
+void Node::QueueWord(char *Word,int Flags,int ReplyPort)
+{
+   CText FileName;
+   struct stat FileStats;
+
+   if(strlen(Word) == 1 && isalpha(*Word)) {
+   // Force single letters to upper case
+      *Word = toupper(*Word);
+   }
+   FileName.print("pcm/%s.wav",Word);
+   if(stat(FileName,&FileStats) == 0) {
+   // Found a match
+      QueueAnnouncement(FileName,Flags,ReplyPort);
+   }
+   else {
+      LOG_ERROR(("%s: Unable to find PCM file for the word \"%s\"\n",
+                 __FUNCTION__,Word));
+   }
+}
+
 // Say the specified phrase
 void Node::SayPhrase(const char *phrase,int Flags,int ReplyPort)
 {
-   PlayPCM *p;
    CText FileName;
    char *cp;
+   char *cp1;
    char *Temp;
    struct stat FileStats;
    CText Phrase;
 
-   if(Flags & SAY_FLAG_CALLSIGN) {
-      SpellCall(phrase,&Phrase);
-   }
-   else {
-      Phrase = phrase;
-   }
+   do {
+      if((cp = strstr((char *) phrase,".wav")) != NULL && strlen(cp) == 4) {
+      // a filename was specified
+         QueueAnnouncement(phrase,Flags,ReplyPort);
+         break;
+      }
 
-   if((cp = strstr(Phrase,".wav")) != NULL && strlen(cp) == 4) {
-   // a filename was specified
-      FileName = (char *) Phrase;
-   }
-   else if(TTS_ExePath == NULL) {
-   // Lookup PCM file that contains the Phrase we want to say
-      if(strlen(Phrase) == 1) {
-      // Special case just a single character
-         char c = *((char *)Phrase);
-         FileName.print("pcm/%c.wav",c);
+      if(Flags & SAY_FLAG_CALLSIGN) {
+         SpellCall(phrase,&Phrase);
       }
       else {
-      // replace all spaces with underscores
-         Temp = strdup(Phrase);
-         cp = Temp;
-         while((cp = strchr(cp,' ')) != NULL) {
-            *cp++ = '_';
-         }
-         FileName.print("pcm/%s.wav",Temp);
-         free(Temp);
-         if(stat(FileName,&FileStats) != 0) {
-         // no such file
-            FileName.Clear();
-            LOG_ERROR(("%s: Unable to find file for phrase \"%s\"\n",
-                       __FUNCTION__,(char *) Phrase));
-         }
+         Phrase = phrase;
       }
-   }
 
-   if(TTS_ExePath != NULL || !FileName.IsEmpty()) {
-      if((p = (PlayPCM *) malloc(sizeof(PlayPCM))) == NULL) {
-         LOG_ERROR(("%s: Error: out of memory\n",__FUNCTION__));
+      if(TTS_ExePath != NULL) {
+         QueueAnnouncement(Phrase,Flags | PLAY_FLAG_TTS,ReplyPort);
+         break;
       }
-      else {
-         p->Link = NULL;
-         p->ReplyPort = ReplyPort;
-         if(pPlayHead == NULL) {
-            pPlayHead = p;
-         }
-         else {
-            pPlayTail->Link = p;
-         }
-         pPlayTail = p;
-         if(!FileName.IsEmpty()) {
-            p->Flags = 0;
-            p->FileName = strdup(FileName);
-            if(Playfp == NULL) {
-               StartNextAnnoucement();
-            }
-         }
-         else {
-            p->Flags = PLAY_FLAG_TTS;
-            p->FileName = strdup(Phrase);
-         }
+
+   // Try to find a PCM file that contains the entire phrase we want to say
+   // replace all spaces with underscores
+      Temp = strdup(Phrase);
+      cp = Temp;
+      while((cp = strchr(cp,' ')) != NULL) {
+         *cp++ = '_';
       }
-   }
+      FileName.print("pcm/%s.wav",Temp);
+      free(Temp);
+
+      if(stat(FileName,&FileStats) == 0) {
+      // Found a match
+         QueueAnnouncement(FileName,Flags,ReplyPort);
+         break;
+      }
+
+   // Try to queue a PCM file for each individual word or letter
+      Temp = strdup(Phrase);
+      cp = Temp;
+
+      while((cp1 = strchr(cp,' ')) != NULL) {
+         *cp1++ = 0;
+         if(*cp) {
+            QueueWord(cp,Flags,ReplyPort);
+         }
+         cp = cp1;
+      }
+
+      if(*cp != 0) {
+         QueueWord(cp,Flags,ReplyPort);
+      }
+      free(Temp);
+   } while(FALSE);
 }
 
 void Node::SpellCall(const char *Call,CText *pPhrase)
@@ -1916,6 +1959,13 @@ int Node::GetAnnounceAudio(int SamplesNeeded)
             Bytes2Read = BytesNeeded - PlayAvail * sizeof(int16);
             Read = fread(&AudioBuf[PlayAvail],1,Bytes2Read,Playfp);
             if(Read > 0) {
+#ifdef BIG_ENDIAN_MACHINE
+            // Convert little endian samples to big endian
+            int i = Read / sizeof(int16);
+            while(i-- > 0) {
+               AudioBuf[i] = BYTE_SWAP_SHORT(AudioBuf[i]);
+            }
+#endif
                PlayAvail += Read / sizeof(int16);
             }
          }

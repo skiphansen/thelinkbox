@@ -12,4 +12,4 @@ config/
 linkbox/tlb
 stamp-h1
 tlbcmd/tlbcmd
-
+configure
