@@ -1,0 +1,9 @@
+How to build from git:
+
+./bootstrap
+make (or gmake on BSD systems)
+
+The GNU autotools (autoconf, automake, libtool, etc) and GNU make are required 
+to built the sources checked out from git.  On BSD systems GNU make is
+usually called gmake.
+
