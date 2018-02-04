@@ -1,4 +1,4 @@
-Welcome to thelinkbox, a member of the CQiNet family.
+# Welcome to thelinkbox, a member of the CQiNet family.
 
 http://CQiNet.sourceforge.net
 
@@ -65,9 +65,7 @@ reconnect indefinitely.
 COS and CTCSS sense and frequency control.
 
 
-#############################################
-Updating from previous versions of thelinkbox
-#############################################
+## Updating from previous versions of thelinkbox
 
 New versions of thelinkbox are usually backwards compatible with configuration 
 files from earlier releases HOWEVER new configuration file variables are added 
@@ -76,10 +74,7 @@ features which are not mentioned elsewhere it is worthwhile to review the
 sample configuration file with each release to discover new capabilities which 
 you may want to take advantage of.  
 
-
-###########
-Portability
-###########
+## Portability
 
 A quick word on portability:  I've tried to the best of my ability and means
 to make thelinkbox as portable as possible.  I've tested it under several
@@ -99,22 +94,22 @@ portable by using libusb but I've run into a show stopper on FreeBSD, namely
 if the USB audio device is claimed by the kernel's audio driver then libusb
 is unable to access the device.
 
-
-###################
-Building on a *nix:
-###################
+## Building on a *nix:
 
 Executive summary: (the usual)
-        "tar xzf thelinkbox-{VERSION}.tgz"
-        "cd thelinkbox-{VERSION}"
-        "./configure" (or "./configure --enable-usb")
-        "make"
-        <edit the configuration files>
-        <test>
-        "make install"
-        <start the daemon>
 
-Requirements:
+    "tar xzf thelinkbox-{VERSION}.tgz"
+    "cd thelinkbox-{VERSION}"
+    "./bootstrap.sh
+    "./configure" (or "./configure --enable-usb")
+    "make"
+    <edit the configuration files>
+    <test>
+    "make install"
+    <start the daemon>
+
+### Requirements:
+
 The only known requirement to build thelinkbox is the GNU GCC C compiler, the
 GNU GPP C++ compiler or something compatible, a make program and a Bourne 
 shell to run the configure script. GNU make is not required, any old make 
@@ -170,9 +165,7 @@ The final output of the build process is the thelinkbox daemon "tlb" which is
 built in the linkbox subdirectory.  We'll test it before installing it.  
 Before we test it we need to edit the configuration files.
 
-########################
-thelinkbox Configuration
-########################
+## thelinkbox Configuration
 
 A least two text files "tlb.conf" and "tlb.cmds" that are needed to configure 
 thelinkbox.  The first file can contain all of the configuration necessary 
@@ -198,19 +191,17 @@ of interface you will be using and them modify them as needed.
 Fire up your favorite editor and change the various variables to appropriate 
 values.  Refer to the comments in the file for guidance.  
 
---- snip ---
-% cd /usr/local/etc
-% cp tlb.conf.sample tlb.conf
-% cp tlb.cmds.sample tlb.cmds
-% cp iMic.conf.sample Port1.conf
-% vi tlb.conf
-% vi tlb.cmds
-% vi Port1.conf
-% cp irlp.conf.sample Port2.conf
-% vi Port2.conf
-% cp cm108.conf.sample Port3.conf
-% vi Port3.conf
---- snip ---
+    cd /usr/local/etc
+    cp tlb.conf.sample tlb.conf
+    cp tlb.cmds.sample tlb.cmds
+    cp iMic.conf.sample Port1.conf
+    vi tlb.conf
+    vi tlb.cmds
+    vi Port1.conf
+    cp irlp.conf.sample Port2.conf
+    vi Port2.conf
+    cp cm108.conf.sample Port3.conf
+    vi Port3.conf
 
 Lines beginning with ';' or '#' are comments, if you decide to set any of the
 optional settings be sure to delete leading ';' character before the 
@@ -228,9 +219,7 @@ Thelink box can also generate a local log file without using the syslog system.
 This has many advantages and is the recommended method.  The configuration
 file variable LogFileRolloverType controls the logging method.
 
-##################################
-Determining physical USB Addresses
-##################################
+## Determining physical USB Addresses
 
 If you are not using multiple USB audio dongles you can safely ignore this
 section.
@@ -256,19 +245,17 @@ all USB buses until a device is found.
 and display it's address.  Make a note of the address displayed. A sticky 
 label next to the port might be a good idea.
 
---- snip ---
-[root@localhost ~]# /root/tlb -d -f /home/skip/tbd/tbd.conf.440
-thelinkbox Version 0.13 compiled Dec 14 2007 16:24:36
-16:40:07 thelinkbox V 0.13 compiled Dec 14 2007 16:24:36 initializing
-16:40:07 EndPointInit: Initializing 440 port (0)
-16:40:07 EndPointInit: called, TxKeyMethod: 5, RxCosMethod: 6
-16:40:07 UsbInit: found USB device @ 1-1.2
-16:40:07 UsbInit: USB audio device for 440 is /dev/dsp2
-16:40:07 UsbInit: Changing audio device from auto to /dev/dsp2
-16:40:07 FindDevByAdr: event device for "1-1.2" is /dev/input/event3
-16:40:07 Fragsize: 256, fragstotal: 5, bytes: 1280
-16:40:07 EndPointInit: returning 0
---- snip ---
+    [root@localhost ~]# /root/tlb -d -f /home/skip/tbd/tbd.conf.440
+    thelinkbox Version 0.13 compiled Dec 14 2007 16:24:36
+    16:40:07 thelinkbox V 0.13 compiled Dec 14 2007 16:24:36 initializing
+    16:40:07 EndPointInit: Initializing 440 port (0)
+    16:40:07 EndPointInit: called, TxKeyMethod: 5, RxCosMethod: 6
+    16:40:07 UsbInit: found USB device @ 1-1.2
+    16:40:07 UsbInit: USB audio device for 440 is /dev/dsp2
+    16:40:07 UsbInit: Changing audio device from auto to /dev/dsp2
+    16:40:07 FindDevByAdr: event device for "1-1.2" is /dev/input/event3
+    16:40:07 Fragsize: 256, fragstotal: 5, bytes: 1280
+    16:40:07 EndPointInit: returning 0
 
 In this example the AudioDongleAdr that was discovered is 1-1.2.
 
@@ -281,10 +268,7 @@ be used have been determined.
 6. Configure thelinkbox for multiple ports specifying the addresses found
 for AudioDongleAdr.  
 
-
-#######
-Testing
-#######
+## Testing
 
 The daemon has two command line switches to aid testing.  The first switch -f
 specifies where the tlb.conf configuration is located.  
@@ -296,27 +280,25 @@ the information displayed up to a maximum of three times.
 
 For our purposes a single -d suffices. 
 
---- snip ---
-[root@localhost ~]# /root/tlb -d -f /home/skip/tbd/tbd.conf.440
-thelinkbox Version 0.33 compiled May 14 2008 16:31:19
-6:45:49 thelinkbox V 0.33 compiled May 14 2008 16:31:19 initializing
-6:45:49 EndPointInit: Initializing 440 port
-6:45:49 EndPointInit: called, TxKeyMethod: 5, RxCosMethod: 6
-6:45:49 UsbInit: found USB device "440" @ 1-2.2
-6:45:49 UsbInit: USB audio device for 440 is /dev/dsp2
-6:45:49 UsbInit: Changing audio device from auto to /dev/dsp2
-6:45:49 FindInputDevBySn: event device for "440" is /dev/input/event3
-6:45:49 AudioInit#1586: opening "/dev/dsp2"
-6:45:49 Fragsize: 256, fragstotal: 5, bytes: 1280
-6:45:49 EndPointInit: returning 0
-GenAVRS(): sending string:
-)EL-wb6ymh!3345.88NE11820.19W0PHG8660/449220/131 On  @0645
-PullerLoginAck(): Client 8 successfully updated status.
-6:45:50 Msg from EchoLink: EchoLink Server v2.5.996
-6:45:50 Msg from EchoLink:
-6:45:50 Msg from EchoLink: ECHO4: Scottsdale, AZ USA
-Full station list downloaded successfully, 8166 stations listed.
---- snip ---
+    [root@localhost ~]# /root/tlb -d -f /home/skip/tbd/tbd.conf.440
+    thelinkbox Version 0.33 compiled May 14 2008 16:31:19
+    6:45:49 thelinkbox V 0.33 compiled May 14 2008 16:31:19 initializing
+    6:45:49 EndPointInit: Initializing 440 port
+    6:45:49 EndPointInit: called, TxKeyMethod: 5, RxCosMethod: 6
+    6:45:49 UsbInit: found USB device "440" @ 1-2.2
+    6:45:49 UsbInit: USB audio device for 440 is /dev/dsp2
+    6:45:49 UsbInit: Changing audio device from auto to /dev/dsp2
+    6:45:49 FindInputDevBySn: event device for "440" is /dev/input/event3
+    6:45:49 AudioInit#1586: opening "/dev/dsp2"
+    6:45:49 Fragsize: 256, fragstotal: 5, bytes: 1280
+    6:45:49 EndPointInit: returning 0
+    GenAVRS(): sending string:
+    )EL-wb6ymh!3345.88NE11820.19W0PHG8660/449220/131 On  @0645
+    PullerLoginAck(): Client 8 successfully updated status.
+    6:45:50 Msg from EchoLink: EchoLink Server v2.5.996
+    6:45:50 Msg from EchoLink:
+    6:45:50 Msg from EchoLink: ECHO4: Scottsdale, AZ USA
+    Full station list downloaded successfully, 8166 stations listed.
 
 The message beginning with "PullerLoginAck():" indicates that the daemon 
 was successful in logging into the EchoLink directory server.
@@ -326,15 +308,13 @@ stations.  If your callsign or password were not recognized no stations would
 be listed and you would see an error message from EchoLink simular to the
 following:
 
---- snip ---
-6:47:01 Msg from EchoLink: INCORRECT PASSWORD
-6:47:01 Msg from EchoLink:
-6:47:01 Msg from EchoLink: Please check the password
-6:47:01 Msg from EchoLink: and try again. If you have
-6:47:01 Msg from EchoLink: forgotten it, see the Validation
-6:47:01 Msg from EchoLink: section at www.echolink.org.
-Full station list downloaded successfully, 0 stations listed.
---- snip ---
+    6:47:01 Msg from EchoLink: INCORRECT PASSWORD
+    6:47:01 Msg from EchoLink:
+    6:47:01 Msg from EchoLink: Please check the password
+    6:47:01 Msg from EchoLink: and try again. If you have
+    6:47:01 Msg from EchoLink: forgotten it, see the Validation
+    6:47:01 Msg from EchoLink: section at www.echolink.org.
+    Full station list downloaded successfully, 0 stations listed.
 
 If you are not able to get a station list, check your callsign and password
 in the configuration file.  You might also want to rerun the test using more 
@@ -348,33 +328,29 @@ messages will be displayed on the console. Key a radio and hopefully
 you'll see "COS detected". Press some touchtone buttons and hopefully
 you'll also see them displayed.
 
---- snip ---
-[root@localhost ~]# /root/tlb -d -f /home/skip/tbd/tbd.conf.440
-thelinkbox Version 0.13 compiled Dec 14 2007 16:24:36
-16:48:41 thelinkbox V 0.13 compiled Dec 14 2007 16:24:36 initializing
-16:48:41 EndPointInit: Initializing 440 port (0)
-16:48:41 EndPointInit: called, TxKeyMethod: 5, RxCosMethod: 6
-16:48:41 UsbInit: found USB device @ 1-1.2
-16:48:41 UsbInit: USB audio device for 440 is /dev/dsp2
-16:48:41 UsbInit: Changing audio device from auto to /dev/dsp2
-16:48:41 FindDevByAdr: event device for "1-1.2" is /dev/input/event3
-16:48:41 Fragsize: 256, fragstotal: 5, bytes: 1280
-16:48:41 EndPointInit: returning 0
-GenAVRS(): sending string:
-)EL-wb6ymh!3345.88NE11820.19W0PHG8660/449220/131 On  @1648
-PullerLoginAck(): Client 6 successfully updated status.
-Full station list downloaded successfully, 7910 stations listed.
-PollCOS: Node 440 COS active
-PollCOS: Node 440 COS inactive
-16:48:47 DecodeDTMF: Decoding "123"
-16:48:47 RF user executing command "say I'm sorry dave I can't do that"
---- snip ---
+    [root@localhost ~]# /root/tlb -d -f /home/skip/tbd/tbd.conf.440
+    thelinkbox Version 0.13 compiled Dec 14 2007 16:24:36
+    16:48:41 thelinkbox V 0.13 compiled Dec 14 2007 16:24:36 initializing
+    16:48:41 EndPointInit: Initializing 440 port (0)
+    16:48:41 EndPointInit: called, TxKeyMethod: 5, RxCosMethod: 6
+    16:48:41 UsbInit: found USB device @ 1-1.2
+    16:48:41 UsbInit: USB audio device for 440 is /dev/dsp2
+    16:48:41 UsbInit: Changing audio device from auto to /dev/dsp2
+    16:48:41 FindDevByAdr: event device for "1-1.2" is /dev/input/event3
+    16:48:41 Fragsize: 256, fragstotal: 5, bytes: 1280
+    16:48:41 EndPointInit: returning 0
+    GenAVRS(): sending string:
+    )EL-wb6ymh!3345.88NE11820.19W0PHG8660/449220/131 On  @1648
+    PullerLoginAck(): Client 6 successfully updated status.
+    Full station list downloaded successfully, 7910 stations listed.
+    PollCOS: Node 440 COS active
+    PollCOS: Node 440 COS inactive
+    16:48:47 DecodeDTMF: Decoding "123"
+    16:48:47 RF user executing command "say I'm sorry dave I can't do that"
 
 [much more to come ... stay tuned!]
 
-############
-Installation
-############
+## Installation
 
 Thelinkbox is designed to run as a system daemon, i.e. a background program 
 that's loaded automatically by the system as part of the bootup process. 
@@ -415,31 +391,26 @@ subdirectory.  The installation script will copy tlb, tlb.conf.sample and
 tlb.sh into the appropriate subdirectories. You will need to be root to 
 when running the installation script.
 
---- snip ---
-%cd FreeBSD
-%su
-Password:
-fastbsd# ./install
-+ cd ..
-+ make install
-Making install in src
-/bin/sh ../config/mkinstalldirs /usr/local/libexec
-  /usr/bin/install -c  tlb /usr/local/libexec/tlb
-/bin/sh ./config/mkinstalldirs /usr/local/etc
- /usr/bin/install -c -m 644 ./tlb.conf.sample /usr/local/etc/tlb.conf.sample
-+ cd FreeBSD
-+ cp tlb.sh /usr/local/etc/rc.d
-fastbsd# 
---- snip ---
+    %cd FreeBSD
+    %su
+    Password:
+    fastbsd# ./install
+    + cd ..
+    + make install
+    Making install in src
+    /bin/sh ../config/mkinstalldirs /usr/local/libexec
+    /usr/bin/install -c  tlb /usr/local/libexec/tlb
+    /bin/sh ./config/mkinstalldirs /usr/local/etc
+    /usr/bin/install -c -m 644 ./tlb.conf.sample /usr/local/etc/tlb.conf.sample
+    + cd FreeBSD
+    + cp tlb.sh /usr/local/etc/rc.d
+    fastbsd# 
 
 Since the installation process only copies tlb.conf.sample (to prevent 
 accidents when thelinkbox is updated in the future) we must manually copy
 our configuration file to the "standard place":
 
---- snip ---
-$ cp tlb.conf /usr/local/etc
---- snip ---
-
+    $ cp tlb.conf /usr/local/etc
 
 RedHat Linux
 
@@ -451,54 +422,47 @@ It will then create links from /etc/rc.d/rc*.d subdirectories the
 to stop tlb in run levels 0, 1 and 6.  You will need to be root to when 
 running the installation script.
 
---- snip ---
-$ su
-Password: 
-[root@linux73 RedHat]# ./install
-+ cd ..
-+ make install
-Making install in src
-make[1]: Entering directory `/home/skip/thelinkbox-0.10/src'
-make[2]: Entering directory `/home/skip/thelinkbox-0.10/src'
-/bin/sh ../config/mkinstalldirs /usr/local/libexec
-  /usr/bin/install -c  tlb /usr/local/libexec/tlb
-make[2]: Nothing to be done for `install-data-am'.
-make[2]: Leaving directory `/home/skip/thelinkbox-0.10/src'
-make[1]: Leaving directory `/home/skip/thelinkbox-0.10/src'
-make[1]: Entering directory `/home/skip/thelinkbox-0.10'
-make[2]: Entering directory `/home/skip/thelinkbox-0.10'
-/bin/sh ./config/mkinstalldirs /usr/local/etc
- /usr/bin/install -c -m 644 ./tlb.conf.sample /usr/local/etc/tlb.conf.sample
-make[2]: Nothing to be done for `install-data-am'.
-make[2]: Leaving directory `/home/skip/thelinkbox-0.10'
-make[1]: Leaving directory `/home/skip/thelinkbox-0.10'
-+ cd RedHat
-+ ln -s /usr/local/libexec/tlb /usr/sbin
-+ '[' '!' -d /etc/rc.d/init.d ']'
-+ cp tlb /etc/rc.d/init.d
-+ ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc0.d/K73tlb
-+ ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc1.d/K73tlb
-+ ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc2.d/S73tlb
-+ ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc3.d/S73tlb
-+ ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc4.d/S73tlb
-+ ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc5.d/S73tlb
-+ ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc6.d/K73tlb
-[root@linux73 RedHat]# exit
-$
---- snip ---
+    $ su
+    Password: 
+    [root@linux73 RedHat]# ./install
+    + cd ..
+    + make install
+    Making install in src
+    make[1]: Entering directory `/home/skip/thelinkbox-0.10/src'
+    make[2]: Entering directory `/home/skip/thelinkbox-0.10/src'
+    /bin/sh ../config/mkinstalldirs /usr/local/libexec
+    /usr/bin/install -c  tlb /usr/local/libexec/tlb
+    make[2]: Nothing to be done for `install-data-am'.
+    make[2]: Leaving directory `/home/skip/thelinkbox-0.10/src'
+    make[1]: Leaving directory `/home/skip/thelinkbox-0.10/src'
+    make[1]: Entering directory `/home/skip/thelinkbox-0.10'
+    make[2]: Entering directory `/home/skip/thelinkbox-0.10'
+    /bin/sh ./config/mkinstalldirs /usr/local/etc
+    /usr/bin/install -c -m 644 ./tlb.conf.sample /usr/local/etc/tlb.conf.sample
+    make[2]: Nothing to be done for `install-data-am'.
+    make[2]: Leaving directory `/home/skip/thelinkbox-0.10'
+    make[1]: Leaving directory `/home/skip/thelinkbox-0.10'
+    + cd RedHat
+    + ln -s /usr/local/libexec/tlb /usr/sbin
+    + '[' '!' -d /etc/rc.d/init.d ']'
+    + cp tlb /etc/rc.d/init.d
+    + ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc0.d/K73tlb
+    + ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc1.d/K73tlb
+    + ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc2.d/S73tlb
+    + ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc3.d/S73tlb
+    + ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc4.d/S73tlb
+    + ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc5.d/S73tlb
+    + ln -s /etc/rc.d/init.d/tlb /etc/rc.d/rc6.d/K73tlb
+    [root@linux73 RedHat]# exit
+    $
 
 Since the installation process only copies tlb.conf.sample (to prevent 
 accidents when thelinkbox is updated in the future) we must manually copy
 or configuration file to the "standard place":
 
---- snip ---
-$ cp tlb.conf /usr/local/etc
---- snip ---
+    $ cp tlb.conf /usr/local/etc
 
-
-########
-Commands
-########
+## Commands
 
 Since thelinkbox is based on thebridge conference server all of the command
 for thebridge are also available on thelinkbox.  Please see the
@@ -508,16 +472,16 @@ A few commands are unique to thelinkbox, only those commands are
 documented here.  Most commands are applied to the current port which is
 selected by setting the port.  (.port 2).
 
-".dtmfdecode <command>"
+    dtmfdecode <command>
 
 The .dtmfdecode command allows a specified command to be interpreted as if
 it were entered by the RF user.  
 
-".id"
+    .id
 
 The .id command forces the nodes ID to be sent.
 
-".link [-m] [-p] <destination> [<source> ...]"
+    .link [-m] [-p] <destination> [<source> ...]
 
 The link command is used to connect nodes (RF ports and VoIP connections) 
 together.  Each linkage is bidirectional unless the -m (monitor) switch is 
@@ -538,11 +502,12 @@ example to link an *EXISTING* VoIP connection from W1AW to the "440" port:
 .link w1aw 440 (or .link 440 w1aw).  VoIP connections are created when a
 remote node connects to our node or by use of the .connect command.
 
-".link"
+    .link
+    
 To generate a list of current port linkages run the .link command without
 arguments.
 
-".users [-b] [-c] [-q] [-t] [-T] [-v] [?]"
+    .users [-b] [-c] [-q] [-t] [-T] [-v] [?]
   
 The .users command lists the callsign of all VoIP connections order of login 
 along with their attributes.  This command is particularly useful for net
@@ -552,28 +517,28 @@ EchoLink client's info window.
 The meaning of the attribute characters may be display by the ".user ?" 
 command.  They are as follows:
 
-User attributes:
-0 - User is usign the Speak Freely protocol
-1 - User is using the RTP protocol
-A - User is logged in as an administrator.
-a - User is using the  ADCPM codec
-B - User is running theBridge conference or thelinkbox.
-C - User is a linked conference other than thebridge.
-c - User's chat text is been suppressed
-F - User is playing a file (using the .play or .test commands).
-f - User is Full duplex
-I - User is Isolated (not In conference)
-K - User's has been Kicked (being disconnected).
-L - User is a Lurker.
-m - User's audio is muted.
-M - User's audio and text are muted.
-P - User is a permanent connection (connected by a .connect command).
-R - User is in Receive only mode (being monitored)
-S - User is logged in as a sysop.
-T - User is currently Talking.
-u - User is running the uLaw codec
-x - User connection is inactive
-! - User is an old version of thebridge which sent SDES packets containing 
+    User attributes:
+    0 - User is usign the Speak Freely protocol
+    1 - User is using the RTP protocol
+    A - User is logged in as an administrator.
+    a - User is using the  ADCPM codec
+    B - User is running theBridge conference or thelinkbox.
+    C - User is a linked conference other than thebridge.
+    c - User's chat text is been suppressed
+    F - User is playing a file (using the .play or .test commands).
+    f - User is Full duplex
+    I - User is Isolated (not In conference)
+    K - User's has been Kicked (being disconnected).
+    L - User is a Lurker.
+    m - User's audio is muted.
+    M - User's audio and text are muted.
+    P - User is a permanent connection (connected by a .connect command).
+    R - User is in Receive only mode (being monitored)
+    S - User is logged in as a sysop.
+    T - User is currently Talking.
+    u - User is running the uLaw codec
+    x - User connection is inactive
+    ! - User is an old version of thebridge which sent SDES packets containing 
     a private "txt" extension field.
     
 The -b (bare) switch suppresses the display of user attributes.
@@ -588,10 +553,10 @@ The -s switch displays the user list in the same format as is presented
 The -v switch displays the version number of user's client
 
 
-".unlink all"
-".unlink rf"
-".unlink voip"
-".unlink <destination> [<source>...]"
+    .unlink all
+    .unlink rf
+    .unlink voip
+    .unlink <destination> [<source>...]
 
 The unlink command is (much a you might expect) the reverse of the .link
 command, it desolves links established with the .link command.  The "all" 
@@ -603,18 +568,18 @@ If the argument is a single node name then all links to that node are desolved.
 Finally specific links can be desolved by specifing both the destination and 
 source names.
 
-".pcm record <test point>"
-".pcm close <test point>"
-".pcm"
+    .pcm record <test point>
+    .pcm close <test point>
+    .pcm
 
 The .pcm command allows raw PCM data from various points in the signal 
 path for the current port to be saved to disk.  This command is primarily an 
 debug aid. When the .pcm command is run without arguments a list of 
 available test points is displayed.
 
-".rxlevel"
-".rxlevel -c"
-".rxlevel -q"
+    .rxlevel
+    .rxlevel -c
+    .rxlevel -q
 
 The .rxlevel command to displays received audio level statistics from 
 physical ports or VoIP connections.  This command displays the value of 
@@ -624,23 +589,25 @@ number of samples that were monitored.  The values are cleared after each
 The -c switch enables a continous display of levels several times a second 
 until another .rxlevel command is entered.
 The -q switch suppresses the column header line.  For example:
-  tlb> .rxlevel
-  Min     Max     Total   RMS     Samples
-  -8230   7167    -46     4256    512
+
+    tlb> .rxlevel
+    Min     Max     Total   RMS     Samples
+    -8230   7167    -46     4256    512
 
 The maximum possible value for 16 bit sound cards is 32767, the minimum
 value is -32768.  There is no formal standard value for "full modulation",
 but examining the reference IRLP and EchoLink audio recordings shows that
 peak "modulation" is about 80% of full scale or about +/-26000. 
  
-".script <path>"
+    .script <path>
 
 The .script command allows any program or script to be executed.  
 This command is only available for use by the DTMF command parser.  
 This provides a very powerful way to extend the functionality of thelinkbox
 by the addition of user programs.
 
-".sendbeacon [-a] [-x]"
+    .sendbeacon [-a] [-x]
+
 The .sendbeacon command is used to send an AX25 broadcast packet or an update 
 to the APRS-IS system.
 
@@ -657,13 +624,12 @@ just before the transmitter would have been unkeyed.
 The -a switch forces an status update to be sent to the APRS-IS system if
 APRS-IS support is enabled.
 
-
-".shutup"
+    .shutup
 
 The .shutup command kills any announcements for the RF user that are queued. 
 
-".say [-c] [-s] <text phrase>"
-".say [-c] <wavefile>"
+    .say [-c] [-s] <text phrase>
+    .say [-c] <wavefile>
 
 The .say command generates audio for the currently selected port.  If 
 thelinkbox has been configured to use an external voice synthesizer then
@@ -674,11 +640,11 @@ files containing audio matching the requested phrase.
 The -s option specifies that the <text phrase> should be treated as a callsign
 i.e. spelled out rather than spoken. 
 
-".sweep <frequency>"
-".sweep <frequency> <end frequency>"
-".sweep <frequency> <end frequency> <sweep time>"
-".sweep <frequency> <end frequency> <sweep time> <number of sweeps>"
-".sweep <frequency> <end frequency> <sweep time> <number of sweeps> <level>"
+    .sweep <frequency>
+    .sweep <frequency> <end frequency>
+    .sweep <frequency> <end frequency> <sweep time>
+    .sweep <frequency> <end frequency> <sweep time> <number of sweeps>
+    .sweep <frequency> <end frequency> <sweep time> <number of sweeps> <level>
 
 The .sweep command is used to generate an audio test tone or audio frequency
 sweep for testing transmit level on an RF port.  The level is the maximum
@@ -687,59 +653,60 @@ value of the generated PCM wave so it has the range of 0 to 32768.  We
 modulation.  If there is a standard I'm unaware of it.
 
 
-.tonegen [ID <id> ] [TF1 <freq> [EF1 <freq>]] [TL <level>] [TF2 <freq>]
-         [TL2 <level>] DUR <duration> [RPT <count>] : ...
+    .tonegen [ID <id> ] [TF1 <freq> [EF1 <freq>]] [TL <level>] [TF2 <freq>]
+             [TL2 <level>] DUR <duration> [RPT <count>] : ...
 
-.tonegen [ID <id> ] [TF1 <freq>] [TL <level>] [WPM <speed> ] CW <cw message>:
+    .tonegen [ID <id> ] [TF1 <freq>] [TL <level>] [WPM <speed> ] CW <cw message>:
 
-.tonegen [ID <id> ] [TL <row level>] [TL2 <column level> ] [DUR <active time>]
-         [PAUSE <pause time>] DTMF <dtmf buttons> :
+    .tonegen [ID <id> ] [TL <row level>] [TL2 <column level> ] [DUR <active time>]
+             [PAUSE <pause time>] DTMF <dtmf buttons> :
 
-.tonegen [ID <id> ] FILE <path to file>:
+    .tonegen [ID <id> ] FILE <path to file>:
 
-.tonegen [ID <id> ] AX25 <packet data>:
+    .tonegen [ID <id> ] AX25 <packet data>:
 
-.tonegen #<id>
+    .tonegen #<id>
 
-.tongen !<id>
+    .tongen !<id>
 
-ID <number>    Assign a reference number the tone for future reference.
+    ID <number>    Assign a reference number the tone for future reference.
 
-TF1 <freq>     Set Tone 1 frequency, 0 = no tone
+    TF1 <freq>     Set Tone 1 frequency, 0 = no tone
 
-EF1 <freq>     Set Tone 1 end frequency for sweeps (starts at TF1)
+    EF1 <freq>     Set Tone 1 end frequency for sweeps (starts at TF1)
 
-TL <level>     Set Tone 1 and 2 level
+    TL <level>     Set Tone 1 and 2 level
 
-TF2 <freq>     Set Tone 2 frequency, 0 = no tone
+    TF2 <freq>     Set Tone 2 frequency, 0 = no tone
 
-TL2 <level>    Set Tone 2 level
+    TL2 <level>    Set Tone 2 level
 
-DUR <duration> duration of tone segment or the DTMF digit active time 
-               in milliseconds.
+    DUR <duration> duration of tone segment or the DTMF digit active time 
+                   in milliseconds.
                
-PAUSE <time>   The amount of silence in milliseconds between DTMF digits.
+    PAUSE <time>   The amount of silence in milliseconds between DTMF digits.
 
-WPM <speed>    Set speed of CW message in words per minute.
+    WPM <speed>    Set speed of CW message in words per minute.
 
-CW  <cw msg>   Send specified message in morse code at speed specified by WPM
-               using a tone frequency specified by TF1 and tone level specified
-               by TL.
+    CW  <cw msg>   Send specified message in morse code at speed specified by WPM
+                   using a tone frequency specified by TF1 and tone level specified
+                   by TL.
                
-DTMF <dtmf>    Send DTMF tones <dtmf> with tone level specified by TL and TL2,
-               active duration specified by DUR and interadigit time specified 
-               by PAUSE.  If DUR is not specified the active duration is 
-               defined by the configuration file variable DtmfEncodeDuration.  
-               If PAUSE is not specified the intradigit time is defined by
-               the configuration file variable DtmfEncodePause.
+    DTMF <dtmf>    Send DTMF tones <dtmf> with tone level specified by TL and TL2,
+                   active duration specified by DUR and interadigit time specified 
+                   by PAUSE.  If DUR is not specified the active duration is 
+                   defined by the configuration file variable DtmfEncodeDuration.  
+                   If PAUSE is not specified the intradigit time is defined by
+                   the configuration file variable DtmfEncodePause.
                
-#<id>          Play saved ToneSpec <id> which was previously stored by the
-               tonespec configuration variable.
-!<id>          Cancel ToneSpec <id> if it is running
+    #<id>          Play saved ToneSpec <id> which was previously stored by the
+                   tonespec configuration variable.
+    
+    !<id>          Cancel ToneSpec <id> if it is running
 
-FILE path      Tone segment is contents of specified 8 Khz wav file.
+    FILE path      Tone segment is contents of specified 8 Khz wav file.
 
-RPT <count>    repeat pattern from the beginning or last rpt count times.
+    RPT <count>    repeat pattern from the beginning or last rpt count times.
 
 The .tonegen command is used to generate tones for various purposes such as
 courtesy tones, command acknowledgements, invalid command indication, 
@@ -795,41 +762,38 @@ used to adjust the amplitude of the generated AFSK tones.  By default the
 tone level is set by the port configuration variable Ax25ToneLevel of the
 currently selected port.
 
-.port [<port name>]
+    .port [<port name>]
 
 The .port command selects the active port for commands such as .id, .say,
 .tonegen, etc.  When run without arguments the .port lists all ports with
 current port status.  For example:
 
-tlb> port
-Available ports:
-  144 Rx
-> 440 Tx
-  WR7NV-R
-tlb>
-
-
+    tlb> port
+    Available ports:
+    144 Rx
+    > 440 Tx
+    WR7NV-R
+    tlb>
 
 This shows that port "144" is receiving a signal and the port "440" is 
 transmitting.  Additionally the '>' character displayed in front of the 440 
 port indicates that it is the port currently selected for control.
 
-
-.rxfrequency <frequency>
+    .rxfrequency <frequency>
 
 This command sets the frequency of the receiver of the selected port if
 frequency control is supported by the hardware.  The frequency is specified
 in Mhz (146.52).
 
-.txoffset <transmitter offset from receiver frequency>
+    .txoffset <transmitter offset from receiver frequency>
 
 This command sets the transmitter's frequency in relationship to the receiver's
 frequency.  The offset is specified in Mhz (-.600).  Changing .rxfrequency
 does not effect the transmitter offset.
 
-.rxtone <ctcss tone frequency>
-.rxtone search
-.rxtone any
+    .rxtone <ctcss tone frequency>
+    .rxtone search
+    .rxtone any
 
 This command sets the CTCSS tone of the receiver of the selected port if
 CTCSS tone control is supported by the hardware.  The frequency is specified
@@ -846,15 +810,13 @@ If the port is configured to use the internal software CTCSS decoder rxtone
 may be set to "any" to have the CTCSS decoder decode for any CTCSS standard
 CTCSS tone.  This mode is primarily for testing.
 
-
-.txtone <ctcss tone frequency>
+    .txtone <ctcss tone frequency>
 
 This command sets the transmitter's CTCSS tone on the selected port if
 CTCSS tone control is supported by the hardware.  The frequency is specified
 in hz (131.8), a tone frequency of 0.0 disables CTCSS generation.
 
-
-.frequency [<rx frequency> [,<tx offset> [,<tx tone> [,<rx tone>]]]]
+    .frequency [<rx frequency> [,<tx offset> [,<tx tone> [,<rx tone>]]]]
 
 This command allows all parameters of the selected port to be set in one
 command.  If no arguments are specified the current values are displayed
@@ -863,10 +825,7 @@ if available.  If the transmitter offset is not specified it defaults to
 disabled. If the receiver tone is not specified it defaults to carrier 
 squelch.
 
-
-###############################
-Bugs/Features/known limitations
-###############################
+## Bugs/Features/known limitations
 
 1.  Consider this software to be Beta quality, it is very new and the paint is 
 still wet.  One of the primary goals is stability approaching that of the 
@@ -884,10 +843,7 @@ appears to be a security feature inherent in Linux.  If thelinkbox stops
 running for unexplained reasons please consider running it as root long enough 
 to get a core dump to assist with correcting the problem.
 
-
-######
-Thanks
-######
+## Thanks
 
 Special thanks to K7KAJ, N7LF, VK3JED and OH2LAK for helping me debug and 
 test the pre-release versions of thelinkbox. 
@@ -896,10 +852,7 @@ Thanks to the fine folks at sourceforge for hosting this and literally
 thousands of other open source projects.  Please support the OSDN in anyway
 you can!
 
-
-################
-How you can help
-################
+## How you can help
 
 1. Report all bugs. Please provide details on the version of thelinkbox, the
 operating systems, and operating conditions.  Log files and core dumps are 
