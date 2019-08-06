@@ -19,6 +19,11 @@
    http://CQiNet.sourceforge.net
 
    $Log: nodes.cpp,v $
+   Revision 1.27  2019/07/07 16:29:15  wd5m
+   Changed char DTMF2CharLookup[]... to unsigned char DTMF2CharLookup[]...
+   to make Debian 9 64 Bit compiler happy.
+
+   $Log: nodes.cpp,v $
    Revision 1.26  2012/12/09 16:29:15  wb6ymh
    Corrected memset() argument order in ExecuteCommand().
 
@@ -663,7 +668,7 @@ void EndPointEvent(char *EventText)
 // If no match is found among the stations currently logged on, 
 // thebridge will say "NOT FOUND".
 
-char DTMF2CharLookup[] = {
+unsigned char DTMF2CharLookup[] = {
    0x21, // 'A'
    0x22, // 'B'
    0x23, // 'C'
