@@ -3022,7 +3022,7 @@ int GetCall(ConfServer *pCS,ConfClient *pCC,rtcp_t *p,int len)
       rtcp_sdes_item_t *p;
       char *cp;
    } Item;
-   int  bFoundCallsign = FALSE;
+   int  bFoundCallsign = TRUE;
    int  x;
    int  Ret = FALSE;
    int  EchoLinkRevMajor;
