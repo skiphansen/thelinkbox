@@ -119,7 +119,7 @@ hopefully any version of GCC will work.
 On Debian, and perhaps other distributions:
 
     apt-get update
-    apt-get install build-essentials automake
+    apt-get install build-essential automake
     
 
 If for some reason either configure or the make should fail please
