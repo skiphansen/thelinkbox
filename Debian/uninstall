@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# description: remove thelinkbox startup scripts on Debian Linux (LSB System)
+# $Id: uninstall,v 1.1 2012/12/10 06:00:13 wb6ymh Exp $
+
+set -x
+update-rc.d -f tlb remove
+rm /usr/sbin/tlb
+rm /etc/rc.d/init.d/tlb
+cd ..
+make uninstall
+cd Debian

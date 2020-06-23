@@ -1,0 +1,54 @@
+#!/bin/sh
+# tlb - Start/Stop thelinkbox Radio-Over-IP software
+# WD5M copied from theBridge Debian install script by VE7LTD - January 2017
+
+### BEGIN INIT INFO
+# Provides:          tlb
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Should-Start:      
+# Should-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts/Stops thebridge daemon
+### END INIT INFO
+
+set -e
+
+TLB="/usr/sbin/tlb"
+OPTIONS="-s"
+
+# Check for daemon presence
+[ -x "$TLB" ] || exit 0
+
+# Get lsb functions
+. /lib/lsb/init-functions
+
+case "$1" in
+  start)
+    log_begin_msg "Starting thelinkbox ... "
+    start-stop-daemon --start --quiet --oknodo --exec "$TLB" -- "$OPTIONS"
+    log_end_msg $?
+    ;;
+  stop)
+    log_begin_msg "Stopping thelinkbox ... "
+    start-stop-daemon --stop --quiet --oknodo --retry 2 --exec "$TLB" -- "$OPTIONS"
+    log_end_msg $?
+    ;;
+  restart)
+    $0 stop
+    sleep 1
+    $0 start
+    ;;
+  reload|force-reload) 
+    log_begin_msg "Reloading tlb.conf ... "
+    start-stop-daemon --stop --signal HUP --exec "$TLB"
+    log_end_msg $?
+    ;;
+  status)
+    status_of_proc "$TLB" tlb
+    ;;
+  *)
+    log_success_msg "Usage: /etc/init.d/tlb {start|stop|restart|reload|force-reload|status}"
+    exit 1
+esac
