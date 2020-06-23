@@ -116,6 +116,12 @@ shell to run the configure script. GNU make is not required, any old make
 should be fine. I tried to avoid the use of exotic compiler features, 
 hopefully any version of GCC will work.  
 
+On Debian, and perhaps other distributions:
+
+    apt-get update
+    apt-get install build-essentials automake
+    
+
 If for some reason either configure or the make should fail please
 send me the details and I'll try to help you correct the problem.
 
@@ -368,7 +374,7 @@ assistance.
 
 Most Posix operating systems start system daemons using approaches similar
 to either FreeBSD (i.e. the BSD camp) or RedHat (i.e. the System V camp). 
-Scripts to install thelinkbox on FreeBSD and RedHat Linux have been provided.
+Scripts to install thelinkbox on FreeBSD, RedHat and Debian Linux have been provided.
 Start with the scripts that are the closest match to your system and then 
 modify them if necessary.  I will be happy to include installation scripts 
 for other operating system that are sent to me with future releases.
@@ -409,6 +415,50 @@ when running the installation script.
 Since the installation process only copies tlb.conf.sample (to prevent 
 accidents when thelinkbox is updated in the future) we must manually copy
 our configuration file to the "standard place":
+
+    $ cp tlb.conf /usr/local/etc
+
+Debian Linux
+
+If you are running on Debian Linux run the installation scripts from the
+Debian subdirectory.  The installation script will copy the tlb executable,
+tlb.conf.sample, and tlb shell scripts into the appropriate subdirectories.  
+It will then create links from /etc/init.d/ subdirectories the 
+tlb shell script to start tlb in run levels 2, 3, 4 and 5 and 
+to stop tlb in run levels 0, 1 and 6.  You will need to be root to when 
+running the installation script.
+
+    $ su
+    Password: 
+    [root@linux Debian]# cd Debian
+    [root@linux Debian]# ./install
+    + cd ..
+    + make install
+    Making install in src
+    make[1]: Entering directory `/home/skip/thelinkbox-0.10/src'
+    make[2]: Entering directory `/home/skip/thelinkbox-0.10/src'
+    /bin/sh ../config/mkinstalldirs /usr/local/libexec
+    /usr/bin/install -c  tlb /usr/local/libexec/tlb
+    make[2]: Nothing to be done for `install-data-am'.
+    make[2]: Leaving directory `/home/skip/thelinkbox-0.10/src'
+    make[1]: Leaving directory `/home/skip/thelinkbox-0.10/src'
+    make[1]: Entering directory `/home/skip/thelinkbox-0.10'
+    make[2]: Entering directory `/home/skip/thelinkbox-0.10'
+    /bin/sh ./config/mkinstalldirs /usr/local/etc
+    /usr/bin/install -c -m 644 ./tlb.conf.sample /usr/local/etc/tlb.conf.sample
+    make[2]: Nothing to be done for `install-data-am'.
+    make[2]: Leaving directory `/home/skip/thelinkbox-0.10'
+    make[1]: Leaving directory `/home/skip/thelinkbox-0.10'
+    + cd Debian
+    + ln -s /usr/local/libexec/tlb /usr/sbin
+    + cp tlb /etc/init.d
+    + update-rc.d tlb defaults
+    [root@linux Debian]# exit
+    $
+
+Since the installation process only copies tlb.conf.sample (to prevent 
+accidents when thelinkbox is updated in the future) we must manually copy
+or configuration file to the "standard place":
 
     $ cp tlb.conf /usr/local/etc
 
