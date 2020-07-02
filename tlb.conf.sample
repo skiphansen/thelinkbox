@@ -447,7 +447,7 @@ LogFileRolloverType = 1
 
 ; This variable controls whether both callsign and IP address are shown in the
 ; logs files on connect/disconnect.
-;ShowIPAddresses = 0
+;LogIPAddresses = 0
 
 ; Set this variable to enable support for full duplex operation via VoIP links.
 ; When full duplex is enabled thelinkbox informs the other end of VoIP links
