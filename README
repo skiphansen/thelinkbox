@@ -107,6 +107,7 @@ Building on a *nix:
 Executive summary: (the usual)
         "tar xzf thelinkbox-{VERSION}.tgz"
         "cd thelinkbox-{VERSION}"
+        "./bootstrap.sh"
         "./configure" (or "./configure --enable-usb")
         "make"
         <edit the configuration files>
