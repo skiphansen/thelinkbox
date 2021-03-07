@@ -18,6 +18,16 @@
    The latest version of this program may be found at
    http://CQiNet.sourceforge.net
 
+   Revision 1.29  2021/03/04 16:29:15  wd5m
+   1. Added call to GetTxAudio in ~Node() function to clear hanging
+      audio buffers when node disconnects. This frees audio buffers
+      and avoids a memory leak.
+   2. Updated ALOG and LLOG statements to improve debug tracing.
+
+   $Log: nodes.cpp,v $
+   Revision 1.28  2021/02/20 16:29:15  wd5m
+   Added -q (quiet) switch support to .port command to reduce logging.
+
    $Log: nodes.cpp,v $
    Revision 1.27  2019/07/07 16:29:15  wd5m
    Changed char DTMF2CharLookup[]... to unsigned char DTMF2CharLookup[]...
@@ -339,6 +349,8 @@ struct avl_table *NodeTree;   // sorted by node name
 int bTTS_Running = FALSE;
 int MixBuffer[AUDIO_BUF_SIZE];
 
+int bLogCmd;
+
 // scratch buffers for audio transmission
 int16 AudioBuf[AUDIO_BUF_SIZE];  
 int16 MasterBuf[AUDIO_BUF_SIZE];  
@@ -589,6 +601,15 @@ void CmdSetPort(ClientInfo *p,ConfClient *pCC1,char *Arg)
    Node *pNode;
    NamedNode NodeLookup;
    ClientBufPrint prn(p);
+   int Option = 0;
+
+   while((Option = GetCmdOptions(&Arg,"q")) != -1) {
+      switch(Option) {
+         case 'q':   // Quiet - for CGI polling, suppress logging.
+            bLogCmd = FALSE;
+            break;
+      }
+   }
 
    if(*Arg == 0) {
    // No argument, list ports
@@ -1477,6 +1498,9 @@ Node::Node()
 
 Node::~Node()
 {
+   int16 TxAudioBuf = NULL;
+   LLOG(("%s %s starting.\n",__FUNCTION__,NodeName));
+   GetTxAudio(&TxAudioBuf,0);
    UnlinkAll(TRUE);
    CmdPCM(NULL,"close all");
    if(NodeName != NULL) {
@@ -1496,17 +1520,21 @@ int Node::UnlinkAll(int bNailedToo)
    LinkedNode *pLastLink = NULL;
    LinkedNode *pNextLink;
 
+   LLOG(("%s %s starting.\n",__FUNCTION__,NodeName));
 // unlink everything from this node
    pLink = pReceivers;
    while(pLink != NULL) {
       pNextLink = pLink->pNextRx;
       if(!(pLink->Flags & LNK_FLG_NAILED_UP) || bNailedToo) {
+         char *TempNodeName = pLink->pRx->NodeName;
          if(DeleteRx(pLink->pRx)) {
          // Shouldn't happen !
             LOG_ERROR(("%s#%d: Internal error!\n",__FUNCTION__,__LINE__));
             DumpMe();
             Ret = 1;
          }
+         LLOG(("%s: %s - deleted %s Receivers\n",__FUNCTION__,
+               NodeName,TempNodeName));
          pLink = pReceivers;
       }
       else {
@@ -1533,8 +1561,8 @@ int Node::UnlinkAll(int bNailedToo)
             Ret = 1;
          }
          Transmitters--;
-         LLOG(("%s: %s - deleted %s, now have %d Transmitters\n",__FUNCTION__,
-               NodeName,TempNodeName,Transmitters));
+         LLOG(("%s: %s - deleted %s, now have %d Transmitters, DeleteRx Ret: %d\n",__FUNCTION__,
+               NodeName,TempNodeName,Transmitters,Ret));
       }
       else {
          pLastLink = pLink;
@@ -1542,6 +1570,7 @@ int Node::UnlinkAll(int bNailedToo)
       pLink = pNextLink;
    }
 
+   LLOG(("%s %s ending.\n",__FUNCTION__,NodeName));
    return Ret;
 }
 
@@ -2063,6 +2092,7 @@ int Node::DeleteTx(LinkedNode *pDeleteLink)
    LinkedNode *pLastLink = NULL;
    LinkedNode *pLink = pTransmitters;
 
+   LLOG(("%s %s (nodes.cpp) starting.\n",__PRETTY_FUNCTION__,NodeName));
    while(pLink != NULL) {
       if(pLink == pDeleteLink) {
          if(pLastLink == NULL) {
@@ -2072,14 +2102,14 @@ int Node::DeleteTx(LinkedNode *pDeleteLink)
             pLastLink->pNextTx = pLink->pNextTx;
          }
          Transmitters--;
-         LLOG(("%s: %s - deleted %s, now have %d Transmitters\n",__FUNCTION__,
+         LLOG(("%s: %s - deleted %s, now have %d Transmitters\n",__PRETTY_FUNCTION__,
                NodeName,pDeleteLink->pTx->NodeName,Transmitters));
          break;
       }
       pLastLink = pLink;
       pLink = pLink->pNextTx;
    }
-
+   LLOG(("%s %s (nodes.cpp) ending.\n",__PRETTY_FUNCTION__,NodeName));
    return (pLink == NULL);
 }
 
@@ -2129,6 +2159,7 @@ int Node::DeleteRx(Node *pRx)
    LinkedNode *pLink;
    LinkedNode *pLastLink = NULL;
    
+   LLOG(("%s %s starting.\n",__FUNCTION__,NodeName));
    pLink = pReceivers;
    while(pLink != NULL) {
       if(pLink->pRx == pRx) {
@@ -2146,6 +2177,7 @@ int Node::DeleteRx(Node *pRx)
       pLink = pLink->pNextRx;
    }
 
+   LLOG(("%s %s ending.\n",__FUNCTION__,NodeName));
    return (pLink == NULL);
 }
 
@@ -2333,7 +2365,7 @@ int Node::GetTxAudio(int16 *TxBuf,int SamplesNeeded)
             }
 #endif
 
-            ALOG(("%s<-%s %d NewSamples\n",NodeName,pLink->pRx->NodeName,
+            ALOG(("%s %s<-%s %d NewSamples\n",__FUNCTION__,NodeName,pLink->pRx->NodeName,
                   NewSamples));
 
             if(MuteDTMF && pLink->pRx->LastDTMFDigit.tv_sec != 0) {
@@ -2361,7 +2393,7 @@ int Node::GetTxAudio(int16 *TxBuf,int SamplesNeeded)
          }
 
          if(Samples > 0 && Samples < SamplesNeeded) {
-            ALOG(("%s<-%s only returned %d of %d needed\n",NodeName,
+            ALOG(("%s %s<-%s only returned %d of %d needed\n",__FUNCTION__,NodeName,
                   pLink->pRx->NodeName,Samples,SamplesNeeded));
          }
 

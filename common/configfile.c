@@ -19,6 +19,10 @@
    http://CQiNet.sourceforge.net
 
    $Log: configfile.c,v $
+   Revision 1.17a 2012/05/05 04:46:26  wd5m
+   Allow longer lines in config for tone definitions.
+
+   $Log: configfile.c,v $
    Revision 1.17  2010/11/17 04:46:26  wb6ymh
    Set ConfigPass in ParseConfigLine. Programmer is too lazy to pass it
    as an argument.  Get over it, this is just a "hobby".
@@ -130,7 +134,7 @@ int ParseConfigLine(char *line,struct config_entry *config_vars,int Pass)
    int Ret = 0;   // Assume the best
    struct config_entry *p = config_vars;
    char var_name[121];
-   char var_value[121];
+   char var_value[221];
    char var_type_temp[4];
    int  var_temp;
    int   i = 0;
@@ -260,9 +264,9 @@ int parse_configfile(FILE *config,struct config_entry *config_vars,int Pass)
    FILE *fp = NULL;
    char *cp;
    char *cp1;
-   char line[121];
+   char line[221];
 
-   while(fgets(line,120,config) != NULL) {
+   while(fgets(line,220,config) != NULL) {
       if(!is_comment(line)) {
          if(strncmp(line,"include ",8) == 0) {
          // include another file here

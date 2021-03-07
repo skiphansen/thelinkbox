@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# description: install thelinkbox startup scripts on Debian Linux (LSB System)
+# 
+
+set -x
+cd ..
+make install
+cd Debian
+
+ln -s /usr/local/libexec/tlb /usr/sbin
+cp tlb /etc/init.d/
+
+update-rc.d tlb defaults

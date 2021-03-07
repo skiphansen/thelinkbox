@@ -19,6 +19,11 @@
    http://CQiNet.sourceforge.net
 
    $Log: voip.cpp,v $
+   Revision 1.25  2021/03/05 14:05:02 -0500 wd5m
+   1. Changed VoipNode::DeleteTx to remove if(pAudio->BufNum > pDeleteLink->BufNum)
+   logic so all audio buffers are consumed. This is part of a memory leak fix.
+   2. Changed ALOG debug statements to improve debug tracing.
+
    Revision 1.24  2012/12/09 18:38:02  wb6ymh
    1. Added code to service software DTMF decoder when no physical ports are
    configured.
@@ -425,12 +430,12 @@ void VoipSink::QueueAudio(NetAudio *pAudio)
       if(pParent->Transmitters > 0 || pParent->DtmfMethod == 3) {
          AudioQCount++;
          if(SendingHost[0] == 0) {
-            ALOG(("%s ssrc 0x%x Queuing SN %d QCount %d samples %d\n",NodeName,
-                  ssrc,pAudio->BufSN,AudioQCount,pAudio->Available));
+            ALOG(("%s %s ssrc 0x%x Queuing SN %d QCount %d samples %d\n",
+                  __FUNCTION__,NodeName,ssrc,pAudio->BufSN,AudioQCount,pAudio->Available));
          }
          else {
-            ALOG(("%s Host %s Queuing SN %d QCount: %d samples: %d\n",
-                  NodeName,SendingHost,pAudio->BufSN,AudioQCount,
+            ALOG(("%s %s Host %s Queuing SN %d QCount: %d samples: %d\n",
+                  __FUNCTION__,NodeName,SendingHost,pAudio->BufSN,AudioQCount,
                   pAudio->Available));
          }
          if(pAudio->Used != 0) {
@@ -447,8 +452,8 @@ void VoipSink::QueueAudio(NetAudio *pAudio)
       }
       else {
       // If a tree falls in the forest and nobody is listening ...
-         ALOG(("%s No transmitters, freeing SN %d, QCount: %d\n",
-               NodeName,pAudio->BufSN,AudioQCount));
+         ALOG(("%s %s No transmitters, freeing SN %d, QCount: %d\n",
+               __FUNCTION__,NodeName,pAudio->BufSN,AudioQCount));
          free(pAudio);
       }
    }
@@ -755,13 +760,15 @@ int VoipNode::DeleteTx(LinkedNode *pDeleteLink)
 // Decrement the usage count for all buffers this link hasn't used yet
    NetAudio *pAudio = pDeleteLink->pInHead;
    NetAudio *pNextAudio;
+   
    while(pAudio != NULL) {
       pNextAudio = pAudio->Link;
-      if(pAudio->BufNum > pDeleteLink->BufNum) {
-         ConsumeAudio(pAudio);
-      }
+      ALOG(("%s %s ConsumeAudio for BufSN %d, BufNum %d, pDeleteLink->BufNum %d,  AudioQCount %d, Users: %d\n",
+            __PRETTY_FUNCTION__,NodeName,pAudio->BufSN,pAudio->BufNum,pDeleteLink->BufNum,AudioQCount, pAudio->Users));
+      ConsumeAudio(pAudio);
       pAudio = pNextAudio;
    }
+   ALOG(("%s %s (voip.cpp) ending. AudioQCount: %d\n",__PRETTY_FUNCTION__,NodeName,AudioQCount));
    return Node::DeleteTx(pDeleteLink);
 }
 
@@ -800,8 +807,8 @@ int VoipNode::SamplesAvailable(LinkedNode *pLink,int bForce)
       pAudio = pInHead;
       while(pAudio->BufNum <= pLink->BufNum) {
       // We've already consumed this buffer, try the next one
-         ALOG(("%s Skipping BufNum %d already consumed by %s\n",
-               NodeName,pAudio->BufNum,pLink->pTx->NodeName));
+         ALOG(("%s %s Skipping BufSN %d, BufNum %d already consumed by %s, Users: %d\n",
+               __FUNCTION__,NodeName,pAudio->BufSN,pAudio->BufNum,pLink->pTx->NodeName,pAudio->Users));
 
          if((pAudio = pAudio->Link) == NULL) {
             break;
@@ -861,12 +868,14 @@ int VoipNode::GetRxAudio(
    while((pAudio = pInHead) != NULL) {
       if(pAudio->Users <= 0) {
          AudioQCount--;
-         ALOG(("%s Freeing BufSN %d, BufNum %d, AudioQCount: %d\n",NodeName,
-               pAudio->BufSN,pAudio->BufNum,AudioQCount));
+         ALOG(("%s %s Freeing BufSN %d, BufNum %d, AudioQCount: %d, Users: %d\n",
+               __FUNCTION__,NodeName,pAudio->BufSN,pAudio->BufNum,AudioQCount,pAudio->Users));
          pInHead = pAudio->Link;
          free(pAudio);
       }
       else {
+         ALOG(("%s %s Finished empty audio buffers BufSN %d, BufNum %d, AudioQCount: %d, Users: %d\n",
+               __FUNCTION__,NodeName,pAudio->BufSN,pAudio->BufNum,AudioQCount,pAudio->Users));
          break;
       }
    }
@@ -876,8 +885,8 @@ int VoipNode::GetRxAudio(
       pAudio = pInHead;
       while(pAudio->BufNum <= pLink->BufNum) {
       // We've already consumed this buffer, try the next one
-         ALOG(("%s Skipping BufNum %d already consumed by %s\n",
-               NodeName,pAudio->BufNum,pLink->pTx->NodeName));
+         ALOG(("%s %s Skipping BufSN %d, BufNum %d already consumed by %s, Users: %d\n",
+               __FUNCTION__,NodeName,pAudio->BufSN,pAudio->BufNum,pLink->pTx->NodeName,pAudio->Users));
 
          if((pAudio = pAudio->Link) == NULL) {
             break;
@@ -933,7 +942,7 @@ int VoipNode::GetRxAudio(
       if(ActiveSources == 1) {
       // Single source, just use it's buffer directly
          pNewAudioBuf = pFirstSrc->GetAudioBuf();
-         ALOG(("%s 1 source took SN %d samples %d\n",NodeName,
+         ALOG(("%s %s 1 source took SN %d samples %d\n",__FUNCTION__,NodeName,
                pNewAudioBuf->BufSN,pNewAudioBuf->Available));
          if(DtmfMethod == 3) {
             dtmf_rx(&DtmfRxState,(const int16_t *) pNewAudioBuf->Buf,
@@ -951,7 +960,7 @@ int VoipNode::GetRxAudio(
             LOG_ERROR(("%s#%d: malloc failed\n",__FUNCTION__,__LINE__));
             break;
          }
-         ALOG(("%s allocated %d byte SN %d for 32bit data\n",NodeName,BufLen,
+         ALOG(("%s %s allocated %d byte SN %d for 32bit data\n",__FUNCTION__,NodeName,BufLen,
                pNewAudioBuf->BufSN));
          pNewAudioBuf->Flags |= AUDIO_FLAG_32BIT;
          pNewAudioBuf->Available = MinAvailable;
@@ -969,7 +978,7 @@ int VoipNode::GetRxAudio(
                   Samples = MinAvailable;
                }
                pAudio->Used += Samples;
-               ALOG(("%s used %d samples from SN %d, %d left\n",NodeName,
+               ALOG(("%s %s used %d samples from SN %d, %d left\n",__FUNCTION__,NodeName,
                      Samples,pNewAudioBuf->BufSN,
                      pAudio->Available - pAudio->Used));
    
@@ -1042,7 +1051,7 @@ int VoipNode::GetRxAudio(
    }
    
    if(pAudio != NULL) {
-      ALOG(("%s using SN %d available %d used %d\n",NodeName,pAudio->BufSN,
+      ALOG(("%s %s using SN %d available %d used %d\n",__FUNCTION__,NodeName,pAudio->BufSN,
             pAudio->Available,pLink->Used));
       Ret = min(MaxSamples,pAudio->Available - pLink->Used);
       if(pAudio->Flags & AUDIO_FLAG_32BIT) {
@@ -1063,8 +1072,8 @@ int VoipNode::GetRxAudio(
          pLink->pInHead = pAudio->Link;
          pLink->BufNum = pAudio->BufNum;
          pLink->Used = 0;
-         ALOG(("%s %s consumed all of SN %d BufNum %d\n",NodeName,
-               pLink->pTx->NodeName,pAudio->BufSN,pAudio->BufNum));
+         ALOG(("%s %s %s consumed all of SN %d BufNum %d, Users: %d\n",
+               __FUNCTION__,NodeName,pLink->pTx->NodeName,pAudio->BufSN,pAudio->BufNum,pAudio->Users));
          ConsumeAudio(pAudio);
       }
    }
@@ -1133,7 +1142,7 @@ NetAudio *VoipSink::GetAudioBuf()
       }
       D2PRINTF(("\n"));
    // Try to decompress some audio
-      ALOG(("%s Missed packet\n",NodeName));
+      ALOG(("%s %s Missed packet\n",__FUNCTION__,NodeName));
       DecompressAudio();
       if(pInHead != NULL) {
          pAudio = pInHead;
@@ -1404,12 +1413,12 @@ void VoipSink::QueueSFData(soundbuf *p)
       if(AudioQCount >= NetQueueLen) {
       // We're buffering and it's time to rock and roll
          if(SendingHost[0] == 0) {
-            ALOG(("%s, ssrc 0x%x AudioQCount: %d >= NetQueueLen: %d\n",
-                  NodeName,ssrc,AudioQCount,NetQueueLen));
+            ALOG(("%s %s, ssrc 0x%x AudioQCount: %d >= NetQueueLen: %d\n",
+                  __FUNCTION__,NodeName,ssrc,AudioQCount,NetQueueLen));
          }
          else {
-            ALOG(("%s, SendingHost %s AudioQCount: %d >= NetQueueLen: %d (%d)\n",
-                  NodeName,SendingHost,AudioQCount,NetQueueLen,Len));
+            ALOG(("%s %s, SendingHost %s AudioQCount: %d >= NetQueueLen: %d (%d)\n",
+                  __FUNCTION__,NodeName,SendingHost,AudioQCount,NetQueueLen,Len));
          }
          D2PRINTF(("S"));
          bRxBuffering = FALSE;

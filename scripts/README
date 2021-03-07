@@ -49,3 +49,8 @@ script: saytime.sh
 
 Example script to announce the time of day.
 
+---
+script: tlbevent.sh
+
+event script invoked by tlb events to link connections 
+and do other useful things you may wish to add.
