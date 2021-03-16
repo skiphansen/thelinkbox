@@ -47,7 +47,9 @@ sysconf_DATA = tlb.conf.sample tlb.cmds.sample port.conf.sample
 EXTRA_DIST = FreeBSD RedHat TODO cm108.conf.sample iMic.conf.sample \
 	irlp.conf.sample wb2rem.conf.sample tlb.conf.sample \
 	tlb.cmds.sample port.conf.sample SCRIPTING.txt rigblaster.conf.sample \
-	voip.conf.sample
+	voip.conf.sample README.md
+
+AUTOMAKE_OPTIONS = foreign
 
 dist-hook:
 	rm -rf $(distdir)/FreeBSD/CVS

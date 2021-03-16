@@ -1,8 +1,8 @@
 # Welcome to thelinkbox, a member of the CQiNet family.
 
-http://CQiNet.sourceforge.net
+https://github.com/skiphansen/thelinkbox
 
-Support: http://groups.yahoo.com/group/thelinkbox/
+Support: https://groups.io/g/thelinkbox/topics
 
 Thelinkbox is an voice over IP (VoIP) radio linking package for ham radio
 operators that runs under FreeBSD and Linux, and hopefully other Posix 
@@ -877,12 +877,7 @@ squelch.
 
 ## Bugs/Features/known limitations
 
-1.  Consider this software to be Beta quality, it is very new and the paint is 
-still wet.  One of the primary goals is stability approaching that of the 
-operating system and in the FreeBSD or Linux case that says quite a bit.  At 
-this point we're probably a long way from that goal.  At least when thelinkbox 
-crashes under FreeBSD or Linux the operating system probably won't and we 
-should get a core file that will allow the bug to found and hopefully fixed.  
+1.  Consider this software to be mature and stable.
 
 2. Security is weak.  Currently EchoLink's security is based on passwords 
 which are sent in clear text on over the Internet and the relative 
@@ -898,9 +893,11 @@ to get a core dump to assist with correcting the problem.
 Special thanks to K7KAJ, N7LF, VK3JED and OH2LAK for helping me debug and 
 test the pre-release versions of thelinkbox. 
 
-Thanks to the fine folks at sourceforge for hosting this and literally 
-thousands of other open source projects.  Please support the OSDN in anyway
-you can!
+Special thanks to WD5M for ongoing support and bug fixes.
+
+Thanks to the fine folks at sourceforge and github for hosting this and 
+literally thousands of other open source projects.
+
 
 ## How you can help
 
@@ -917,4 +914,4 @@ and protocols used by thelinkbox as well as other programs that will be written.
 The CQiNet web site could certainly use some input and a webmaster. If your 
 language of choice is not a programming language you can still help !
 
-wb6ymh@gfrn.org Dec 9, 2012
+wb6ymh@gfrn.org March 16, 2021
