@@ -349,8 +349,6 @@ struct avl_table *NodeTree;   // sorted by node name
 int bTTS_Running = FALSE;
 int MixBuffer[AUDIO_BUF_SIZE];
 
-int bLogCmd;
-
 // scratch buffers for audio transmission
 int16 AudioBuf[AUDIO_BUF_SIZE];  
 int16 MasterBuf[AUDIO_BUF_SIZE];  

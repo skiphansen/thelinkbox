@@ -297,6 +297,7 @@ typedef          short int16;
 extern int DebugLevel;  // 0 = no debug, 1 = debug, 2 = more debug ...
 // Same as above but a bit map, bottom 3 bits are the same as DebugLevel
 extern unsigned int Debug;
+extern int bLogCmd;
 
 int ReadConfig();
 void Log(char *fmt, ...);
